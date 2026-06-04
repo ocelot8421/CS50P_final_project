@@ -36,9 +36,10 @@ def main():
             elements=gardening_steps,
             stylesheet=stylesheet
         ),
-        dcc.Markdown(id=id.MARKDOWN_UPPER),
         dcc.Markdown(id="log_new_node_position"),
+        dcc.Markdown(id=id.MARKDOWN_UPPER),
         dcc.Markdown(id=id.MARKDOWN_LOWER),
+        dcc.Markdown(id="elements_md"),
         EventListener(
             id=id.EVENTlISTENER_TEST,
             events=[event],
@@ -49,15 +50,6 @@ def main():
     app.run(debug=True)
 
 
-
-# @callback(Output("log_new_node_position", "children"),
-#           Input(id.EVENTlISTENER_TEST, "n_events"),
-#           Input(id.EVENTlISTENER_TEST, "event"),
-#           State(id.CYTOSCPE, 'tapNode'))
-# def click_event(n_events, e, tapNode):
-#     if not tapNode:
-#         return f"* click: \n {e}"
-#     return f"* click: \n {e} \n* tapNode: {tapNode['renderedPosition']}{tapNode['timeStamp']}"
 
 
 # @callback(Output(id.CYTOSCPE, 'elements'),
