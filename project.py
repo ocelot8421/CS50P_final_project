@@ -27,7 +27,8 @@ def main():
 
     # NOTE for study: https://dash.plotly.com/dash-core-components/store
     app.layout = html.Div([
-        dcc.Store(id="new_node_storage", storage_type='session'),
+        # dcc.Store(id="new_node_storage", storage_type='session'),
+        dcc.Store(id="new_node_storage"),
         cyto.Cytoscape(
             id=id.CYTOSCPE,
             layout={'name': 'preset'},

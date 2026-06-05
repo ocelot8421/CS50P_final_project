@@ -12,18 +12,80 @@ import elements
 
 @callback(Output("new_node_storage", "data"),
           Input(id.EVENTlISTENER_TEST, "event"),
+          Input(id.CYTOSCPE, 'tapNode'),
           State("new_node_storage", "data"),
           prevent_initial_call=True)
-def calc_empty_space_clicks(event,storage):
-    # Fill empty_clicks list    
+def calc_empty_space_clicks(event, tapNode, storage):
+    # how many times should click on the empty screen to creat a new node
+    trashhold = 5
+    # collect keys into list
+    keys_event = ['timeStamp', id.coordinate_x, id.coordinate_y]
+    keys_storage = ['click_timeStamps', 'click_x_list', 'click_y_list']
+    # Fill storage    
     if storage is None:
-        storage = {'empty_clicks': []}
-    storage['empty_clicks'].append(event['timeStamp'])
-    # Keep last 3 click
-    if len(storage['empty_clicks']) > 3:
-        storage['empty_clicks'] = storage['empty_clicks'][-3:]
-    
+        storage = {}
+        storage['new_node_appendable'] = False
+        storage['tapNodes'] = []
+        storage['new_node_position'] = {}
+        for ks in keys_storage:
+            storage[ks] = []
+    for i in range(len(keys_event)):
+        storage[keys_storage[i]].append(event[keys_event[i]])        
+        # Keep last 5 clicks
+        if len(storage[keys_storage[i]]) > trashhold:
+            storage[keys_storage[i]] = storage[keys_storage[i]][-trashhold:]
+    # Able to add new node? 
+    if len(storage['click_timeStamps']) == 5:
+            time_difference = storage['click_timeStamps'][4]-storage['click_timeStamps'][0]
+            if time_difference < 2500 and storage['click_x_list'][0] == storage['click_x_list'][4]:
+                storage['new_node_appendable'] = True
+            if storage['click_x_list'][0] != storage['click_x_list'][2]:
+                storage['new_node_appendable'] = False
+    # collect tapNodes to callibrate
+    if tapNode:
+        tn = {'renderedPosition': tapNode['renderedPosition'], 'relativePosition': tapNode['relativePosition']}
+        storage['tapNodes'].append(tn)
+        if len(storage['tapNodes']) > 2:
+            storage['tapNodes'] = storage['tapNodes'][-2:]
+    # calculate relative position of new node # TODO refactor to be a bit prettier
+    if storage['new_node_appendable'] and len(storage['tapNodes']) == 2:
+        x0 = storage['tapNodes'][0]['relativePosition']['x']
+        x0_tap = storage['tapNodes'][0]['renderedPosition']['x']
+        x1 = storage['tapNodes'][1]['relativePosition']['x']
+        x1_tap = storage['tapNodes'][1]['renderedPosition']['x']
+        x_click = storage['click_x_list'][0]
+        x = x0 + int((x1-x0)*(x_click-x0_tap)/(x1_tap-x0_tap))
+        # print("--- x ----: ", x0, x0_tap, "  ", x1, x1_tap, "  ", x_click, "-->", x)
+        y0 = storage['tapNodes'][0]['relativePosition']['y']
+        y0_tap = storage['tapNodes'][0]['renderedPosition']['y']
+        y1 = storage['tapNodes'][1]['relativePosition']['y']
+        y1_tap = storage['tapNodes'][1]['renderedPosition']['y']
+        y_click = storage['click_y_list'][0]
+        y = y0 + int((y1-y0)*(y_click-y0_tap)/(y1_tap-y0_tap))
+        # print("--- y ----: ", y0, y0_tap, "  ", y1, y1_tap, "  ", y_click, "-->", y)
+        storage['new_node_position'] = {'x': x, 'y': y}
+                
     return storage
+
+## ------ ELEMENTS callbacks --------------------------------------------
+@callback(Output(id.CYTOSCPE, 'elements'),
+          State(id.CYTOSCPE, 'elements'),
+          Input("new_node_storage", "data"),
+          prevent_initial_call=True)
+def create_new_node(elements, storage):
+    if storage['new_node_appendable'] and storage['new_node_position'] != {}:
+        elements.extend([
+                {
+                    'data': {
+                        'id': "bela_id",
+                        'label': "belabela",
+                        'label_hun': 'bééélaaaa',
+                    },
+                    'position': storage['new_node_position'],
+                    'classes': 'medium_picture'
+                }])
+    return elements
+    
 
 ## ------ MARKDOWN callbacks ---------------------------------------------
 
@@ -33,10 +95,11 @@ def calc_empty_space_clicks(event,storage):
           Input("new_node_storage", "data"),
           prevent_initial_call=True)
 def click_event(e, tapNode, storage):
-    result_str = f"Event: \n* {e}"
-    
-    result_str += f"storage: {storage}"
-    
+    result_str = f"Event: \n* {e}"    
+    if storage is not None:
+        result_str += f"\n\n storage: {storage}"        
+        if storage['new_node_appendable']:
+            result_str += f"\n* Tap two node to make another new one"    
     if not tapNode:
         return result_str
     return result_str + f"\n\n TapNode: \n* renderedPosition: {tapNode['renderedPosition']} \n* timeStamp: {tapNode['timeStamp']} \n* relativePosition: {tapNode['relativePosition']}"
