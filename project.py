@@ -15,7 +15,6 @@ from style import stylesheet
 from pprint import pprint
 
 
-
 def main():
 
     app = Dash()
@@ -23,7 +22,7 @@ def main():
     # NOTE for study: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/clientX
     event = {
         "event": "click",
-        "props": ["clientX", "clientY", "timeStamp"]
+        "props": [id.coordinate_x, id.coordinate_y, "timeStamp"]
     }
 
     # NOTE for study: https://dash.plotly.com/dash-core-components/store

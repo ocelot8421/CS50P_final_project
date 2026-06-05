@@ -12,3 +12,7 @@ WATERING =        '1_5_0'
 
 # Event listener
 EVENTlISTENER_TEST = 'el'
+# coordinate_x = 'clientX'
+# coordinate_y = 'clientY'
+coordinate_x = 'screenX'
+coordinate_y = 'screenY'
