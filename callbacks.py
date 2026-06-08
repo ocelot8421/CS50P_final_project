@@ -2,6 +2,7 @@ from dash import Input, Output, State, callback
 from dash_extensions import EventListener
 
 import id
+import uuid
 
 
 from dash_cytoscape import utils
@@ -44,7 +45,8 @@ def calc_empty_space_clicks(event, tapNode, storage):
     # collect tapNodes to callibrate
     if tapNode:
         tn = {'renderedPosition': tapNode['renderedPosition'], 'relativePosition': tapNode['relativePosition']}
-        storage['tapNodes'].append(tn)
+        if tn not in storage['tapNodes']:
+            storage['tapNodes'].append(tn)
         if len(storage['tapNodes']) > 2:
             storage['tapNodes'] = storage['tapNodes'][-2:]
     # calculate relative position of new node # TODO refactor to be a bit prettier
@@ -69,23 +71,34 @@ def calc_empty_space_clicks(event, tapNode, storage):
 
 ## ------ ELEMENTS callbacks --------------------------------------------
 @callback(Output(id.CYTOSCPE, 'elements'),
+          Output("new_node_storage", "data", allow_duplicate=True),
           State(id.CYTOSCPE, 'elements'),
           Input("new_node_storage", "data"),
           prevent_initial_call=True)
 def create_new_node(elements, storage):
+
+    # Create new node
     if storage['new_node_appendable'] and storage['new_node_position'] != {}:
+
+        # Generate id NOTE: https://docs.python.org/3/library/uuid.html
+        new_id = str(uuid.uuid4())
+
+        # Insert new node
         elements.extend([
                 {
                     'data': {
-                        'id': "bela_id",
+                        'id': new_id,
                         'label': "belabela",
                         'label_hun': 'bééélaaaa',
                     },
                     'position': storage['new_node_position'],
                     'classes': 'medium_picture'
                 }])
-    return elements
-    
+        # Turn off "new node" mode
+        storage['new_node_appendable'] = False
+
+    return elements, storage
+
 
 ## ------ MARKDOWN callbacks ---------------------------------------------
 
