@@ -1,4 +1,0 @@
-type,id,label,x,y,source,target,label_hun
-node,one,"relax in the garden",75,75,"","","kertben relaxálni"
-node,two,"swipe up trash",200,200,"","","felsepregetni"
-edge,"",,"","",one,two,""

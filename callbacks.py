@@ -4,6 +4,7 @@ from dash_extensions import EventListener
 import id
 import uuid
 
+import json
 
 from dash_cytoscape import utils
 import elements
@@ -96,6 +97,12 @@ def update_elements(elements, storage):
                 }])
         # Turn off "new node" mode
         storage['new_node_appendable'] = False
+        
+        with open("gardening_user.json", mode="w", encoding="utf-8") as output_file:
+            output_file.write(json.dumps(elements, indent=4))
+        
+    # Delete node if pressed alt+click
+    # TODO
 
     return elements, storage
 

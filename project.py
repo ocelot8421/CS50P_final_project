@@ -8,7 +8,8 @@ import dash_cytoscape as cyto
 from dash import Dash, html, dcc
 from dash import Input, Output, State, callback
 from dash_extensions import EventListener
-from elements import default_gardening_elements as gardening_steps
+# from elements import default_gardening_elements as gardening_steps
+from elements import user_elements as gardening_steps
 from style import stylesheet
 
 # NOTE for study: https://docs.python.org/3/library/pprint.html#module-pprint
@@ -22,7 +23,7 @@ def main():
     # NOTE for study: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/clientX
     event = {
         "event": "click",
-        "props": [id.coordinate_x, id.coordinate_y, "timeStamp"]
+        "props": [id.coordinate_x, id.coordinate_y, "timeStamp", "altKey"]
     }
 
     # NOTE for study: https://dash.plotly.com/dash-core-components/store

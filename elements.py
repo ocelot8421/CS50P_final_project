@@ -1,4 +1,5 @@
 import base64
+import json
 from PIL import Image
 
 import id
@@ -71,3 +72,18 @@ default_gardening_elements=[
     {'data': {'source': id.PAVER_WEEDING, 'target': id.POLYMERSAND}},
     {'data': {'source': id.GARDENRELAX, 'target': id.WATERING}},
 ]
+
+# Read user elements from json
+# Study NOTE: https://realpython.com/python-json/#:~:text=json.load(read_file)
+with open("gardening.json", mode="r", encoding="utf-8") as read_file:
+    user_elements = json.load(read_file)
+        
+# Encode pictures
+for element in user_elements:    
+    try:
+        pic_name = element['data']['picture']
+        element['data']['picture'] = encode_pic(pic_name)
+    except:
+        continue
+    
+
