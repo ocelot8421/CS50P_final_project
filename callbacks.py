@@ -56,14 +56,14 @@ def calc_empty_space_clicks(event, tapNode, storage):
         x1 = storage['tapNodes'][1]['relativePosition']['x']
         x1_tap = storage['tapNodes'][1]['renderedPosition']['x']
         x_click = storage['click_x_list'][0]
-        x = x0 + int((x1-x0)*(x_click-x0_tap)/(x1_tap-x0_tap))
+        x = x0 + (x1-x0)*(x_click-x0_tap)/(x1_tap-x0_tap)
         # print("--- x ----: ", x0, x0_tap, "  ", x1, x1_tap, "  ", x_click, "-->", x)
         y0 = storage['tapNodes'][0]['relativePosition']['y']
         y0_tap = storage['tapNodes'][0]['renderedPosition']['y']
         y1 = storage['tapNodes'][1]['relativePosition']['y']
         y1_tap = storage['tapNodes'][1]['renderedPosition']['y']
         y_click = storage['click_y_list'][0]
-        y = y0 + int((y1-y0)*(y_click-y0_tap)/(y1_tap-y0_tap))
+        y = y0 + (y1-y0)*(y_click-y0_tap)/(y1_tap-y0_tap)
         # print("--- y ----: ", y0, y0_tap, "  ", y1, y1_tap, "  ", y_click, "-->", y)
         storage['new_node_position'] = {'x': x, 'y': y}
                 
@@ -75,7 +75,7 @@ def calc_empty_space_clicks(event, tapNode, storage):
           State(id.CYTOSCPE, 'elements'),
           Input("new_node_storage", "data"),
           prevent_initial_call=True)
-def create_new_node(elements, storage):
+def update_elements(elements, storage):
 
     # Create new node
     if storage['new_node_appendable'] and storage['new_node_position'] != {}:
