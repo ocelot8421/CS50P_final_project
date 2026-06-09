@@ -79,6 +79,11 @@ def calc_empty_space_clicks(event, tapNode, storage):
           prevent_initial_call=True)
 def update_elements(elements, storage):
      
+    print(" --------- elements:")
+    for e in elements:
+        print(str(e)[:140])
+    print(" --------- elements vége")
+    
     # Create new node
     if storage['new_node_appendable'] and storage['new_node_position'] != {}:
 
@@ -100,17 +105,17 @@ def update_elements(elements, storage):
         # Turn off "new node" mode
         storage['new_node_appendable'] = False
         
-        with open("gardening_user.json", mode="w", encoding="utf-8") as output_file:
-            output_file.write(json.dumps(elements, indent=4))
+        # with open("gardening_user.json", mode="w", encoding="utf-8") as output_file:
+        #     output_file.write(json.dumps(elements, indent=4))
+        with open("elements_v2.py", mode="w", encoding="utf-8") as output_file:
+            output_file.write("default_gardening_elements=")
+            output_file.write(str(elements))
             
                 
-    # ..................
-    
-    # what is in app.layout?
-    # print("app.layout:  - - - - ")
-    # for e in elements:
-    #     print(str(e)[:140])
-    # .....................    
+    print(" --------- elements #2")
+    for e in elements:
+        print(str(e)[:140])
+    print(" --------- elements vége #2")
         
     # Delete node if pressed alt+click
     # TODO
@@ -172,7 +177,7 @@ def displaySelectedPosition(data_list):
 
 @callback(Output('elements_md', 'children'),
           Input(id.CYTOSCPE, 'elements'),
-          Input(id.CYTOSCPE, 'tapNode'),
+          State(id.CYTOSCPE, 'tapNode'),
           prevent_initial_call=True)
 def insert_new_node(elements, tapNode):
     result_list = []

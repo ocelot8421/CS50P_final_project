@@ -19,7 +19,7 @@ def encode_pic(pic_name):
 default_gardening_elements=[
     {
         'data': {
-            'id': id.GARDENRELAX, 
+            'id': id.GARDENRELAX,
             'label': 'Relax in the garden',
             'label_hun': 'Relaxálás a kertben',
             'picture': encode_pic("gardenrelax.jpg")
@@ -29,10 +29,21 @@ default_gardening_elements=[
     },
     {
         'data': {
-            'id': id.SWEEPING, 
-            'label': 'Swiping the yard',
+            'id': id.SWEEPING,
+            # 'label': 'Swiping the yard',
+            'label': 'Ice cream eating',
             'label_hun': 'Udvar felseprése',
             'picture': encode_pic("sweeping_yard.png")
+        },
+        'position': {'x': 40, 'y': 130},
+        'classes': 'medium_picture'
+    },
+    {
+        'data': {
+            'id': 'ghjk',
+            # 'label': 'Swiping the yard',
+            'label': 'Ice cream eating',
+            'label_hun': 'Udvar felseprése'
         },
         'position': {'x': 40, 'y': 130},
         'classes': 'medium_picture'
@@ -75,19 +86,21 @@ default_gardening_elements=[
 
 # Read user elements from json
 # Study NOTE: https://realpython.com/python-json/#:~:text=json.load(read_file)
-try:
-    with open("gardening_user.json", mode="r", encoding="utf-8") as read_user_file:
-        user_elements = json.load(read_user_file)
-except FileNotFoundError:
-    with open("gardening.json", mode="r", encoding="utf-8") as read_file:
-        user_elements = json.load(read_file)
-        
+# try:
+#     with open("gardening_user.json", mode="r", encoding="utf-8") as read_user_file:
+#         user_elements = json.load(read_user_file)
+# except FileNotFoundError:
+#     with open("gardening.json", mode="r", encoding="utf-8") as read_file:
+#         user_elements = json.load(read_file)
+with open("gardening_user.json", mode="r", encoding="utf-8") as read_user_file:
+    user_elements = json.load(read_user_file)
+
 # Encode pictures
-for element in user_elements:    
+for element in user_elements:
     try:
         pic_name = element['data']['picture']
         element['data']['picture'] = encode_pic(pic_name)
     except:
         continue
-    
+
 
