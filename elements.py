@@ -75,8 +75,12 @@ default_gardening_elements=[
 
 # Read user elements from json
 # Study NOTE: https://realpython.com/python-json/#:~:text=json.load(read_file)
-with open("gardening.json", mode="r", encoding="utf-8") as read_file:
-    user_elements = json.load(read_file)
+try:
+    with open("gardening_user.json", mode="r", encoding="utf-8") as read_user_file:
+        user_elements = json.load(read_user_file)
+except FileNotFoundError:
+    with open("gardening.json", mode="r", encoding="utf-8") as read_file:
+        user_elements = json.load(read_file)
         
 # Encode pictures
 for element in user_elements:    

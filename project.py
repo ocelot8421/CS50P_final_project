@@ -2,14 +2,17 @@
 https://dash.plotly.com/cytoscape
 """
 
-import callbacks
-import id
+
 import dash_cytoscape as cyto
 from dash import Dash, html, dcc
 from dash import Input, Output, State, callback
 from dash_extensions import EventListener
 # from elements import default_gardening_elements as gardening_steps
-from elements import user_elements as gardening_steps
+# from elements import user_elements as gardening_steps
+
+import callbacks_py
+import id
+import elements
 from style import stylesheet
 
 # NOTE for study: https://docs.python.org/3/library/pprint.html#module-pprint
@@ -34,7 +37,7 @@ def main():
             id=id.CYTOSCPE,
             layout={'name': 'preset'},
             style={'width': '50%', 'height': '600px'},
-            elements=gardening_steps,
+            elements=elements.user_elements,
             stylesheet=stylesheet
         ),
         dcc.Markdown(id="log_new_node_position"),
@@ -47,9 +50,10 @@ def main():
             logging=True
         )
     ])
+      
 
+    # app.run(debug=True, dev_tools_hot_reload=True) # Stude NOTE dev_tools_hot_reload: https://dash.plotly.com/devtools#configuring-with-run
     app.run(debug=True)
-
 
 
 if __name__ == '__main__':

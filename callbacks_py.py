@@ -1,13 +1,13 @@
 from dash import Input, Output, State, callback
+from dash_cytoscape import utils
 from dash_extensions import EventListener
 
 import id
+import json
 import uuid
 
-import json
 
-from dash_cytoscape import utils
-import elements
+# SUTDY NOTE: https://dash.plotly.com/devtools#callback-graph
 
 
 ## ------ STORAGE callbacks ---------------------------------------------
@@ -67,8 +67,9 @@ def calc_empty_space_clicks(event, tapNode, storage):
         y = y0 + (y1-y0)*(y_click-y0_tap)/(y1_tap-y0_tap)
         # print("--- y ----: ", y0, y0_tap, "  ", y1, y1_tap, "  ", y_click, "-->", y)
         storage['new_node_position'] = {'x': x, 'y': y}
-                
+                   
     return storage
+
 
 ## ------ ELEMENTS callbacks --------------------------------------------
 @callback(Output(id.CYTOSCPE, 'elements'),
@@ -77,7 +78,7 @@ def calc_empty_space_clicks(event, tapNode, storage):
           Input("new_node_storage", "data"),
           prevent_initial_call=True)
 def update_elements(elements, storage):
-
+     
     # Create new node
     if storage['new_node_appendable'] and storage['new_node_position'] != {}:
 
@@ -95,14 +96,25 @@ def update_elements(elements, storage):
                     'position': storage['new_node_position'],
                     'classes': 'medium_picture'
                 }])
+        
         # Turn off "new node" mode
         storage['new_node_appendable'] = False
         
         with open("gardening_user.json", mode="w", encoding="utf-8") as output_file:
             output_file.write(json.dumps(elements, indent=4))
+            
+                
+    # ..................
+    
+    # what is in app.layout?
+    # print("app.layout:  - - - - ")
+    # for e in elements:
+    #     print(str(e)[:140])
+    # .....................    
         
     # Delete node if pressed alt+click
     # TODO
+    
 
     return elements, storage
 
@@ -159,7 +171,7 @@ def displaySelectedPosition(data_list):
 
 
 @callback(Output('elements_md', 'children'),
-          State(id.CYTOSCPE, 'elements'),
+          Input(id.CYTOSCPE, 'elements'),
           Input(id.CYTOSCPE, 'tapNode'),
           prevent_initial_call=True)
 def insert_new_node(elements, tapNode):
