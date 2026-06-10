@@ -40,6 +40,7 @@ def main():
             elements=elements.user_elements,
             stylesheet=stylesheet
         ),
+        dcc.Markdown(id="modify_node_md"),
         dcc.Markdown(id="log_new_node_position"),
         dcc.Markdown(id=id.MARKDOWN_UPPER),
         dcc.Markdown(id=id.MARKDOWN_LOWER),

@@ -118,6 +118,21 @@ def update_elements(elements, storage):
 
     return elements, storage
 
+@callback(Output('modify_node_md', 'children'),
+          Input(id.CYTOSCPE, 'tapNode'),
+          State(id.EVENTlISTENER_TEST, "event"))
+def modify_node(tapNode, event):
+    result_str = "Modify node:"
+    try:
+        altKey_pressed = event['altKey']
+        result_str += "\n* alt key pressed at last nodetapping: " + str(altKey_pressed)
+        if altKey_pressed:
+            result_str += "\n* label: " + tapNode['data']['label']
+    except TypeError:
+        result_str += " ..."
+    return result_str
+    
+
 
 ## ------ MARKDOWN callbacks ---------------------------------------------
 
