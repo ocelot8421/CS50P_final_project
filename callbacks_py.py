@@ -1,4 +1,5 @@
 from dash import Input, Output, State, callback
+from dash import dcc
 from dash_cytoscape import utils
 from dash_extensions import EventListener
 
@@ -132,6 +133,21 @@ def modify_node(tapNode, event):
         result_str += " ..."
     return result_str
     
+## ------ INPUT callbacks ---------------------------------------------
+@callback(Output('input_container', 'children'),
+          Input(id.CYTOSCPE, 'tapNode'),
+          State('input_container', 'children'), # TODO delete
+          prevent_initial_call=True)
+def generate_input_fields(tapNode, field_list):
+    result_fields = []
+    filed_names = ['label', 'label_hun', 'something_else']
+    for name in filed_names:
+        new_field = [
+                name.capitalize(),
+                dcc.Input(id='input-'+ name, type='text')
+            ]
+        result_fields.extend(new_field)
+    return result_fields
 
 
 ## ------ MARKDOWN callbacks ---------------------------------------------

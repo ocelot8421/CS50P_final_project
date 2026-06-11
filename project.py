@@ -41,6 +41,10 @@ def main():
             stylesheet=stylesheet
         ),
         dcc.Markdown(id="modify_node_md"),
+        html.Div(id="input_container", style={'width': '50%', 'display': 'inline'}, children=[
+            'Label:',
+            dcc.Input(id='input-label', type='text')
+        ]),
         dcc.Markdown(id="log_new_node_position"),
         dcc.Markdown(id=id.MARKDOWN_UPPER),
         dcc.Markdown(id=id.MARKDOWN_LOWER),
