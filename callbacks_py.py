@@ -137,7 +137,7 @@ selected_by_altKey = False
 ## ------ INPUT callbacks ---------------------------------------------
 @callback(Output('input_container', 'children'),
           Input(id.CYTOSCPE, 'tapNode'),
-          Input(id.EVENTlISTENER_TEST, "event"),
+          State(id.EVENTlISTENER_TEST, "event"),
           prevent_initial_call=True)
 def generate_input_fields(tapNode, event):
     # Flags
