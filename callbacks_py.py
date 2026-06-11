@@ -132,21 +132,41 @@ def modify_node(tapNode, event):
     except TypeError:
         result_str += " ..."
     return result_str
-    
+
+selected_by_altKey = False
 ## ------ INPUT callbacks ---------------------------------------------
 @callback(Output('input_container', 'children'),
           Input(id.CYTOSCPE, 'tapNode'),
-          State('input_container', 'children'), # TODO delete
+          Input(id.EVENTlISTENER_TEST, "event"),
           prevent_initial_call=True)
-def generate_input_fields(tapNode, field_list):
-    result_fields = []
+def generate_input_fields(tapNode, event):
+    # Flags
+    global selected_by_altKey
+    try:
+        altKey_pressed = event['altKey']
+    except:
+        altKey_pressed = False
+    # Labels
     filed_names = ['label', 'label_hun', 'something_else']
-    for name in filed_names:
-        new_field = [
-                name.capitalize(),
-                dcc.Input(id='input-'+ name, type='text')
-            ]
-        result_fields.extend(new_field)
+    
+    result_fields = []    
+    selected_by_altKey = not selected_by_altKey
+    
+    if altKey_pressed and selected_by_altKey:
+        for name in filed_names:
+            new_field = [
+                    name.capitalize(),
+                    dcc.Input(id='input-'+ name, type='text')
+                ]
+            result_fields.extend(new_field)
+    elif altKey_pressed and not selected_by_altKey:
+        try:
+            result_fields.extend(["Place for tapNode data"])
+        except:
+            result_fields = []
+    else:
+        result_fields = []
+        
     return result_fields
 
 
@@ -165,6 +185,7 @@ def click_event(e, tapNode, storage):
             result_str += f"\n* Tap two node to make another new one"    
     if not tapNode:
         return result_str
+    # BUG: tapNode - independent from that is Input or State - shows previous state (selected or not)
     return result_str + f"\n\n TapNode: \n* renderedPosition: {tapNode['renderedPosition']} \n* timeStamp: {tapNode['timeStamp']} \n* relativePosition: {tapNode['relativePosition']}"
 
 
