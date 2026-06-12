@@ -30,20 +30,9 @@ default_gardening_elements=[
     {
         'data': {
             'id': id.SWEEPING,
-            # 'label': 'Swiping the yard',
-            'label': 'Ice cream eating',
+            'label': 'Swiping the yard',
             'label_hun': 'Udvar felseprése',
             'picture': encode_pic("sweeping_yard.png")
-        },
-        'position': {'x': 40, 'y': 130},
-        'classes': 'medium_picture'
-    },
-    {
-        'data': {
-            'id': 'ghjk',
-            # 'label': 'Swiping the yard',
-            'label': 'Ice cream eating',
-            'label_hun': 'Udvar felseprése'
         },
         'position': {'x': 40, 'y': 130},
         'classes': 'medium_picture'

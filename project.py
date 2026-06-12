@@ -46,7 +46,8 @@ def main():
         html.Div(id="input_container", style={'width': '50%', 'display': 'inline'},
                  children=[
                      dcc.Input(id='input_id', type='hidden'),
-                     dcc.Input(id='input_label', type='hidden')                     
+                     dcc.Input(id='input_label', type='hidden'),                     
+                     html.Button('Save', id='save_btn', style={'display': 'none'})
                      ]
                  ),
         dcc.Markdown(id="log_new_node_position"),
