@@ -1,4 +1,4 @@
-from dash import Input, Output, State, callback
+from dash import Input, Output, State, callback, no_update
 from dash import dcc
 from dash_cytoscape import utils
 from dash_extensions import EventListener
@@ -135,29 +135,47 @@ def generate_input_fields(tapNode, event):
     except:
         altKey_pressed = False
     # Labels
-    filed_names = ['label', 'label_hun']
+    filed_names = ['id', 'label', 'label_hun']
 
     result_fields = []
-    # tap first + alt key pressed --> return input fields
+    # tap first + alt key pressed --> return input fields TODO alt+other key
     if altKey_pressed and selected_by_altKey:
+        title_md = dcc.Markdown(children=["Input fields"])
+        result_fields.extend([title_md])
         for name in filed_names:
             new_field = [
                     name.capitalize()+':',
-                    dcc.Input(id='input-'+name, type='text', value=tapNode['data'][name])
+                    dcc.Input(id='input_'+name, type='text', value=tapNode['data'][name])
                 ]
             result_fields.extend(new_field)
-    # tap second + alt key pressed --> return data list
+    # tap second + alt key pressed --> return data list TODO only alt key
     elif altKey_pressed and not selected_by_altKey:
-        try:
-            new_field = [dcc.Markdown(children=[[f"* {name}: {tapNode['data'][name]}" for name in filed_names]])]
-            result_fields.extend(new_field)
-        except:
-            result_fields = []
+        title_md = dcc.Markdown(children=["Node data"])
+        result_fields.extend([title_md])
+        new_field = [dcc.Markdown(children=[f"* {name}: {tapNode['data'][name]}" for name in filed_names])]
+        result_fields.extend(new_field)
     else:
         result_fields = []
 
     return result_fields
 
+# Study NOTE: https://dash.plotly.com/dash-core-components/store#:~:text=closes.%0A%20%20%20%20dcc.Store(id%3D%7B-,%27type%27%3A%20%27storage%27%2C%20%27index%27%3A%20%27session%27,-%7D%2C%20storage_type%3D%27session%27)%2C%0A%0A%20%20%20%20html
+@callback(Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
+          Input('input_id', 'value'),
+          Input('input_label', 'value'),
+          State(id.CYTOSCPE, 'elements'),
+          prevent_initial_call=True)
+def modify_label(id, label, elements):
+    if label is None:
+        return no_update
+    for element in elements:
+        try:
+            if element['data']['label'] == label or element['data']['id'] == id:
+                element['data']['label'] = label
+                element['data']['id'] = id
+        except:
+            no_update
+    return elements
 
 ## ------ MARKDOWN callbacks ---------------------------------------------
 
