@@ -42,6 +42,13 @@ def main():
             elements=elements_v2.default_gardening_elements,
             stylesheet=stylesheet
         ),
+        dcc.Markdown(id="modify_node_md"),
+        html.Div(id="input_container", style={'width': '50%', 'display': 'inline'},
+                 children=[
+                     dcc.Input(id='input_id', type='hidden'),
+                     dcc.Input(id='input_label', type='hidden')                     
+                     ]
+                 ),
         dcc.Markdown(id="log_new_node_position"),
         dcc.Markdown(id=id.MARKDOWN_UPPER),
         dcc.Markdown(id=id.MARKDOWN_LOWER),

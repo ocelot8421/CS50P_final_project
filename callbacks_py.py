@@ -1,4 +1,5 @@
-from dash import Input, Output, State, callback
+from dash import Input, Output, State, callback, no_update
+from dash import dcc
 from dash_cytoscape import utils
 from dash_extensions import EventListener
 
@@ -23,7 +24,7 @@ def calc_empty_space_clicks(event, tapNode, storage):
     # collect keys into list
     keys_event = ['timeStamp', id.coordinate_x, id.coordinate_y]
     keys_storage = ['click_timeStamps', 'click_x_list', 'click_y_list']
-    # Fill storage    
+    # Fill storage
     if storage is None:
         storage = {}
         storage['new_node_appendable'] = False
@@ -32,11 +33,11 @@ def calc_empty_space_clicks(event, tapNode, storage):
         for ks in keys_storage:
             storage[ks] = []
     for i in range(len(keys_event)):
-        storage[keys_storage[i]].append(event[keys_event[i]])        
+        storage[keys_storage[i]].append(event[keys_event[i]])
         # Keep last 5 clicks
         if len(storage[keys_storage[i]]) > trashhold:
             storage[keys_storage[i]] = storage[keys_storage[i]][-trashhold:]
-    # Able to add new node? 
+    # Able to add new node?
     if len(storage['click_timeStamps']) == 5:
             time_difference = storage['click_timeStamps'][4]-storage['click_timeStamps'][0]
             if time_difference < 2500 and storage['click_x_list'][0] == storage['click_x_list'][4]:
@@ -101,7 +102,7 @@ def update_elements(elements, storage):
                     'position': storage['new_node_position'],
                     'classes': 'medium_picture'
                 }])
-        
+
         # Turn off "new node" mode
         storage['new_node_appendable'] = False
         
@@ -119,10 +120,67 @@ def update_elements(elements, storage):
         
     # Delete node if pressed alt+click
     # TODO
-    
+
 
     return elements, storage
 
+
+selected_by_altKey = False
+## ------ INPUT callbacks ---------------------------------------------
+@callback(Output('input_container', 'children'),
+          Input(id.CYTOSCPE, 'tapNode'),
+          State(id.EVENTlISTENER_TEST, "event"),
+          prevent_initial_call=True)
+def generate_input_fields(tapNode, event):
+    # Flags
+    global selected_by_altKey
+    selected_by_altKey = not selected_by_altKey
+    try:
+        altKey_pressed = event['altKey']
+    except:
+        altKey_pressed = False
+    # Labels
+    filed_names = ['id', 'label', 'label_hun']
+
+    result_fields = []
+    # tap first + alt key pressed --> return input fields TODO alt+other key
+    if altKey_pressed and selected_by_altKey:
+        title_md = dcc.Markdown(children=["Input fields"])
+        result_fields.extend([title_md])
+        for name in filed_names:
+            new_field = [
+                    name.capitalize()+':',
+                    dcc.Input(id='input_'+name, type='text', value=tapNode['data'][name])
+                ]
+            result_fields.extend(new_field)
+    # tap second + alt key pressed --> return data list TODO only alt key
+    elif altKey_pressed and not selected_by_altKey:
+        title_md = dcc.Markdown(children=["Node data"])
+        result_fields.extend([title_md])
+        new_field = [dcc.Markdown(children=[f"* {name}: {tapNode['data'][name]}" for name in filed_names])]
+        result_fields.extend(new_field)
+    else:
+        result_fields = []
+
+    return result_fields
+
+# Study NOTE: https://dash.plotly.com/dash-core-components/store#:~:text=closes.%0A%20%20%20%20dcc.Store(id%3D%7B-,%27type%27%3A%20%27storage%27%2C%20%27index%27%3A%20%27session%27,-%7D%2C%20storage_type%3D%27session%27)%2C%0A%0A%20%20%20%20html
+@callback(Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
+          Input('input_id', 'value'),
+          Input('input_label', 'value'),
+          State(id.CYTOSCPE, 'elements'),
+          prevent_initial_call=True)
+def modify_label(id, label, elements):
+    if label is None:
+        return no_update
+    for element in elements:
+        try:
+            if element['data']['label'] == label or element['data']['id'] == id:
+                element['data']['label'] = label
+                element['data']['id'] = id
+        except:
+            no_update
+    return elements
 
 ## ------ MARKDOWN callbacks ---------------------------------------------
 
@@ -132,13 +190,14 @@ def update_elements(elements, storage):
           Input("new_node_storage", "data"),
           prevent_initial_call=True)
 def click_event(e, tapNode, storage):
-    result_str = f"Event: \n* {e}"    
+    result_str = f"Event: \n* {e}"
     if storage is not None:
-        result_str += f"\n\n storage: {storage}"        
+        result_str += f"\n\n storage: {storage}"
         if storage['new_node_appendable']:
-            result_str += f"\n* Tap two node to make another new one"    
+            result_str += f"\n* Tap two node to make another new one"
     if not tapNode:
         return result_str
+    # BUG: tapNode - independent from that is Input or State - shows previous state (selected or not)
     return result_str + f"\n\n TapNode: \n* renderedPosition: {tapNode['renderedPosition']} \n* timeStamp: {tapNode['timeStamp']} \n* relativePosition: {tapNode['relativePosition']}"
 
 
@@ -151,7 +210,7 @@ def displaySelectedNodeData(data_list):
     task_list = []
     for data in data_list:
         for e in data:
-            task_list.append(f"{e}: {data[e][:140]}")        
+            task_list.append(f"{e}: {data[e][:140]}")
     return "SelectedNodeData label:\n* " + "\n* ".join(task_list) #TODO handle empty row with dot
 
 
@@ -160,16 +219,16 @@ def displaySelectedNodeData(data_list):
               Input(id.CYTOSCPE, 'tapNode'),
               prevent_initial_call=True)
 def displaySelectedPosition(data_list):
-    
+
     # # study NOTE: https://dash.plotly.com/cytoscape/reference#:~:text=is%20mutable%20overall).-,utils.Tree,-A%20class%20to
     # tree = utils.Tree(elements.default_gardening_elements)
     # print("TREE: ---------------")
     # print(str(tree.get_nodes())[:500])
-    
+
     if data_list is None:
         return "TapNode has not been selected."
-    result_list = [f"type: {type(data_list)}"]   
-    
+    result_list = [f"type: {type(data_list)}"]
+
     for i in data_list:
         result_list.append(f"{i}: {str(data_list[i])[:140]}")
     return "TapNode:\n* " + "\n* ".join(result_list)
