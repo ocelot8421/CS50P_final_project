@@ -79,7 +79,7 @@ def calc_empty_space_clicks(event, tapNode, storage):
           State(id.CYTOSCPE, 'elements'),
           Input("new_node_storage", "data"),
           prevent_initial_call=True)
-def update_elements(elements, storage):
+def creat_new_node(elements, storage):
     
     # Create new node
     if storage['new_node_appendable'] and storage['new_node_position'] != {}:
@@ -103,9 +103,10 @@ def update_elements(elements, storage):
         storage['new_node_appendable'] = False
         
         with open("elements_v2.py", mode="w", encoding="utf-8") as output_file:
-            output_file.write("default_gardening_elements=")
-            output_file.write(str(elements))
-        
+            output_file.write("default_gardening_elements = [\n")
+            for element in elements:
+                output_file.write("    " + str(element)+ ",\n")
+            output_file.write("]")
     # Delete node if pressed alt+click
     # TODO
 
@@ -130,25 +131,32 @@ def generate_input_fields(tapNode, event):
     except:
         altKey_pressed = False
     # Labels
-    filed_names = ['id', 'label', 'label_hun']
+    data_field_names = ['id', 'label', 'label_hun']
 
     result_fields = []
     # tap first + alt key pressed --> return input fields TODO alt+other key
     if altKey_pressed and selected_by_altKey:
         title_md = dcc.Markdown(children=["Input fields"])
         result_fields.extend([title_md])
-        for name in filed_names:
+        for name in data_field_names:
             new_field = [
                     name.capitalize()+':',
                     dcc.Input(id='input_'+name, type='text', value=tapNode['data'][name], debounce=True) # Study NOTE: https://dash.plotly.com/dash-core-components/input#debounce-delays-the-input-processing
                 ]
             result_fields.extend(new_field)
+        result_fields.extend([
+            "Positon x:",
+            dcc.Input(id='input_positon_x', type='text', value=tapNode['position']['x'], debounce=True),
+            "Positon y:",
+            dcc.Input(id='input_positon_y', type='text', value=tapNode['position']['y'], debounce=True),
+        ]) # TODO type = number
         result_fields.extend([html.Button('Save', id='save_btn')])
     # tap second + alt key pressed --> return data list TODO only alt key
     elif altKey_pressed and not selected_by_altKey:
         title_md = dcc.Markdown(children=["Node data"])
         result_fields.extend([title_md])
-        new_field = [dcc.Markdown(children=[f"* {name}: {tapNode['data'][name]}" for name in filed_names])]
+        new_field = [dcc.Markdown(children=[f"* {name}: {tapNode['data'][name]}" for name in data_field_names])]
+        new_field[0].children.extend([f"* position: {tapNode['position']}"])
         result_fields.extend(new_field)
     else:
         result_fields = []
