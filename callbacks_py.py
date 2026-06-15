@@ -1,10 +1,12 @@
-from dash import Input, Output, State, callback, no_update
+from dash import html, Input, Output, State, callback, no_update
 from dash import dcc
 from dash_cytoscape import utils
 from dash_extensions import EventListener
+from dash.exceptions import PreventUpdate #Sutdy NOTE: https://dash.plotly.com/advanced-callbacks#:~:text=Input%2C%20Output%2C%20callback-,from%20dash.exceptions%20import%20PreventUpdate,-external_stylesheets%20%3D%20%5B%27https
 
 import id
 import json
+import file_io
 import uuid
 
 
@@ -78,8 +80,8 @@ def calc_empty_space_clicks(event, tapNode, storage):
           State(id.CYTOSCPE, 'elements'),
           Input("new_node_storage", "data"),
           prevent_initial_call=True)
-def update_elements(elements, storage):
-     
+def creat_new_node(elements, storage):
+    
     # Create new node
     if storage['new_node_appendable'] and storage['new_node_position'] != {}:
 
@@ -100,19 +102,9 @@ def update_elements(elements, storage):
 
         # Turn off "new node" mode
         storage['new_node_appendable'] = False
-
-        with open("gardening_user.json", mode="w", encoding="utf-8") as output_file:
-            output_file.write(json.dumps(elements, indent=4))
-
-
-    # ..................
-
-    # what is in app.layout?
-    # print("app.layout:  - - - - ")
-    # for e in elements:
-    #     print(str(e)[:140])
-    # .....................
-
+        
+        file_io.save_elements_into_python_file(elements, "elements_v2.py")
+            
     # Delete node if pressed alt+click
     # TODO
 
@@ -120,8 +112,10 @@ def update_elements(elements, storage):
     return elements, storage
 
 
-selected_by_altKey = False
+
 ## ------ INPUT callbacks ---------------------------------------------
+
+selected_by_altKey = False
 @callback(Output('input_container', 'children'),
           Input(id.CYTOSCPE, 'tapNode'),
           State(id.EVENTlISTENER_TEST, "event"),
@@ -135,37 +129,48 @@ def generate_input_fields(tapNode, event):
     except:
         altKey_pressed = False
     # Labels
-    filed_names = ['id', 'label', 'label_hun']
+    data_field_names = ['id', 'label', 'label_hun']
 
     result_fields = []
     # tap first + alt key pressed --> return input fields TODO alt+other key
     if altKey_pressed and selected_by_altKey:
         title_md = dcc.Markdown(children=["Input fields"])
         result_fields.extend([title_md])
-        for name in filed_names:
+        for name in data_field_names:
             new_field = [
                     name.capitalize()+':',
-                    dcc.Input(id='input_'+name, type='text', value=tapNode['data'][name])
+                    dcc.Input(id='input_'+name, type='text', value=tapNode['data'][name], debounce=True) # Study NOTE: https://dash.plotly.com/dash-core-components/input#debounce-delays-the-input-processing
                 ]
             result_fields.extend(new_field)
+        result_fields.extend([
+            "Positon x:",
+            dcc.Input(id='input_positon_x', type='text', value=tapNode['position']['x'], debounce=True),
+            "Positon y:",
+            dcc.Input(id='input_positon_y', type='text', value=tapNode['position']['y'], debounce=True),
+        ]) # TODO type = number
+        result_fields.extend([html.Button('Save', id='save_btn')])
     # tap second + alt key pressed --> return data list TODO only alt key
     elif altKey_pressed and not selected_by_altKey:
         title_md = dcc.Markdown(children=["Node data"])
         result_fields.extend([title_md])
-        new_field = [dcc.Markdown(children=[f"* {name}: {tapNode['data'][name]}" for name in filed_names])]
+        new_field = [dcc.Markdown(children=[f"* {name}: {tapNode['data'][name]}" for name in data_field_names])]
+        new_field[0].children.extend([f"* position: {tapNode['position']}"])
         result_fields.extend(new_field)
     else:
         result_fields = []
 
     return result_fields
 
+
 # Study NOTE: https://dash.plotly.com/dash-core-components/store#:~:text=closes.%0A%20%20%20%20dcc.Store(id%3D%7B-,%27type%27%3A%20%27storage%27%2C%20%27index%27%3A%20%27session%27,-%7D%2C%20storage_type%3D%27session%27)%2C%0A%0A%20%20%20%20html
 @callback(Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
           Input('input_id', 'value'),
           Input('input_label', 'value'),
+          Input('input_positon_x', 'value'),
+          Input('input_positon_y', 'value'),
           State(id.CYTOSCPE, 'elements'),
           prevent_initial_call=True)
-def modify_label(id, label, elements):
+def modify_label(id, label, x, y, elements):
     if label is None:
         return no_update
     for element in elements:
@@ -173,9 +178,22 @@ def modify_label(id, label, elements):
             if element['data']['label'] == label or element['data']['id'] == id:
                 element['data']['label'] = label
                 element['data']['id'] = id
+                element['position']['x'] = x
+                element['position']['y'] = y
         except:
             no_update
     return elements
+
+
+@callback(Input('save_btn', 'n_clicks'),
+          State(id.CYTOSCPE, 'elements'))
+def save_input(save_click, elements):
+    if save_click is None:
+        raise PreventUpdate
+    else:
+        file_io.save_elements_into_python_file(elements, "elements_v2.py")
+
+
 
 ## ------ MARKDOWN callbacks ---------------------------------------------
 
@@ -231,7 +249,7 @@ def displaySelectedPosition(data_list):
 
 @callback(Output('elements_md', 'children'),
           Input(id.CYTOSCPE, 'elements'),
-          Input(id.CYTOSCPE, 'tapNode'),
+          State(id.CYTOSCPE, 'tapNode'),
           prevent_initial_call=True)
 def insert_new_node(elements, tapNode):
     result_list = []

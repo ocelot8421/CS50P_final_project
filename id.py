@@ -1,6 +1,6 @@
 CYTOSCPE = 'cytoscape-001'
 
-MARKDOWN_UPPER = 'markdown'
+MARKDOWN_UPPER = 'Selected_Node_md'
 MARKDOWN_LOWER = 'diagnostic_md'
 
 # Nodes id

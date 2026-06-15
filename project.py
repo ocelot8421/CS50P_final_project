@@ -9,6 +9,7 @@ from dash import Input, Output, State, callback
 from dash_extensions import EventListener
 # from elements import default_gardening_elements as gardening_steps
 # from elements import user_elements as gardening_steps
+import elements_v2
 
 import callbacks_py
 import id
@@ -37,14 +38,18 @@ def main():
             id=id.CYTOSCPE,
             layout={'name': 'preset'},
             style={'width': '50%', 'height': '600px'},
-            elements=elements.user_elements,
+            # elements=elements.user_elements,
+            elements=elements_v2.default_gardening_elements,
             stylesheet=stylesheet
         ),
         dcc.Markdown(id="modify_node_md"),
         html.Div(id="input_container", style={'width': '50%', 'display': 'inline'},
                  children=[
                      dcc.Input(id='input_id', type='hidden'),
-                     dcc.Input(id='input_label', type='hidden')                     
+                     dcc.Input(id='input_label', type='hidden'),                     
+                     dcc.Input(id='input_positon_x', type='hidden'),                     
+                     dcc.Input(id='input_positon_y', type='hidden'),                     
+                     html.Button('Save', id='save_btn', style={'display': 'none'})
                      ]
                  ),
         dcc.Markdown(id="log_new_node_position"),
@@ -57,6 +62,8 @@ def main():
             logging=True
         )
     ])
+    
+    
       
 
     # app.run(debug=True, dev_tools_hot_reload=True) # Stude NOTE dev_tools_hot_reload: https://dash.plotly.com/devtools#configuring-with-run
