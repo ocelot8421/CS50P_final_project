@@ -14,4 +14,7 @@ default_gardening_elements = [
     {'data': {'id': '884f9008-c0e1-4250-9bd1-d1c917e0d919', 'label': 'Alt+N instead of clicking 5x', 'label_hun': 'bééélaaaa'}, 'position': {'x': -673.2408045538617, 'y': 223.3052367075396}, 'classes': 'medium_picture'},
     {'data': {'id': '16a3b504-2c48-4d37-abcf-80762e6dd6ef', 'label': 'MVP', 'label_hun': 'bééélaaaa'}, 'position': {'x': -388.65898462742894, 'y': -120.79224839344886}, 'classes': 'medium_picture'},
     {'data': {'id': '751b6752-572d-4430-8a26-e4f03f303514', 'label': 'delete_element()', 'label_hun': 'bééélaaaa'}, 'position': {'x': -387.3630116302766, 'y': 115.85957877195133}, 'classes': 'medium_picture'},
+    {'data': {'id': '9f19eba1-4a6b-4350-8926-68168d123d59', 'label': 'picture-name instead of binary data', 'label_hun': 'bééélaaaa'}, 'position': {'x': -383.67308234004815, 'y': 248.04035087288733}, 'classes': 'medium_picture'},
+    {'data': {'id': 'e973863d-ded5-479a-8bc5-839dc22695c4', 'label': 'Functionality', 'label_hun': 'bééélaaaa'}, 'position': {'x': -1015.1303223687748, 'y': 96.69094664688636}, 'classes': 'medium_picture'},
+    {'data': {'id': '6518cb40-9e9c-4b36-bcab-91ff97d8727b', 'label': 'SQL datahandling', 'label_hun': 'bééélaaaa'}, 'position': {'x': -1011.2987733138624, 'y': 234.48800661637466}, 'classes': 'medium_picture'},
 ]

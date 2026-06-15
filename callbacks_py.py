@@ -258,3 +258,9 @@ def insert_new_node(elements, tapNode):
             result_list.append(f"{key_0}: {element[key_0]}")
         result_list.append("\n\n")
     return "Elements:\n* " + "\n* ".join(result_list)
+
+
+@callback(Input("keyboard", "keydown"))
+def keydown(keydown):
+    print("Key EVENT-------------")
+    print(keydown)

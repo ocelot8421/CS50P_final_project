@@ -6,9 +6,7 @@ https://dash.plotly.com/cytoscape
 import dash_cytoscape as cyto
 from dash import Dash, html, dcc
 from dash import Input, Output, State, callback
-from dash_extensions import EventListener
-# from elements import default_gardening_elements as gardening_steps
-# from elements import user_elements as gardening_steps
+from dash_extensions import EventListener, Keyboard
 import elements_v2
 
 import callbacks_py
@@ -56,10 +54,13 @@ def main():
         dcc.Markdown(id=id.MARKDOWN_UPPER),
         dcc.Markdown(id=id.MARKDOWN_LOWER),
         dcc.Markdown(id="elements_md"),
-        EventListener(
+        EventListener(  # Study NOTE: https://pypi.org/project/dash-extensions/0.0.67/#:~:text=your%20Dash%20app.-,EventListener,-The%20EventListener%20component
             id=id.EVENTlISTENER_TEST,
             events=[event],
             logging=True
+        ),
+        Keyboard(
+            id="keyboard"
         )
     ])
     
