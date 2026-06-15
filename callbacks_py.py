@@ -6,6 +6,7 @@ from dash.exceptions import PreventUpdate #Sutdy NOTE: https://dash.plotly.com/a
 
 import id
 import json
+import file_io
 import uuid
 
 
@@ -102,11 +103,8 @@ def creat_new_node(elements, storage):
         # Turn off "new node" mode
         storage['new_node_appendable'] = False
         
-        with open("elements_v2.py", mode="w", encoding="utf-8") as output_file:
-            output_file.write("default_gardening_elements = [\n")
-            for element in elements:
-                output_file.write("    " + str(element)+ ",\n")
-            output_file.write("]")
+        file_io.save_elements_into_python_file(elements, "elements_v2.py")
+            
     # Delete node if pressed alt+click
     # TODO
 
@@ -168,9 +166,11 @@ def generate_input_fields(tapNode, event):
 @callback(Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
           Input('input_id', 'value'),
           Input('input_label', 'value'),
+          Input('input_positon_x', 'value'),
+          Input('input_positon_y', 'value'),
           State(id.CYTOSCPE, 'elements'),
           prevent_initial_call=True)
-def modify_label(id, label, elements):
+def modify_label(id, label, x, y, elements):
     if label is None:
         return no_update
     for element in elements:
@@ -178,6 +178,8 @@ def modify_label(id, label, elements):
             if element['data']['label'] == label or element['data']['id'] == id:
                 element['data']['label'] = label
                 element['data']['id'] = id
+                element['position']['x'] = x
+                element['position']['y'] = y
         except:
             no_update
     return elements
@@ -189,9 +191,7 @@ def save_input(save_click, elements):
     if save_click is None:
         raise PreventUpdate
     else:
-        with open("elements_v2.py", mode="w", encoding="utf-8") as output_file: # TODO duplicated, make it encapsulated
-                output_file.write("default_gardening_elements=")
-                output_file.write(str(elements))
+        file_io.save_elements_into_python_file(elements, "elements_v2.py")
 
 
 

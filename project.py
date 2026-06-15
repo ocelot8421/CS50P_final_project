@@ -47,6 +47,8 @@ def main():
                  children=[
                      dcc.Input(id='input_id', type='hidden'),
                      dcc.Input(id='input_label', type='hidden'),                     
+                     dcc.Input(id='input_positon_x', type='hidden'),                     
+                     dcc.Input(id='input_positon_y', type='hidden'),                     
                      html.Button('Save', id='save_btn', style={'display': 'none'})
                      ]
                  ),
