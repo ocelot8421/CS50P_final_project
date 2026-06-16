@@ -242,6 +242,7 @@ def display_data_in_lower_md(edge_storage):
 def display_data_in_lower_md(edge_storage, elements):
     if edge_storage:
         elements.extend(edge_storage)
+        file_io.save_elements_into_python_file(elements, "elements_v2.py")
         edge_storage = []
     return elements
 
