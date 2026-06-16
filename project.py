@@ -6,9 +6,7 @@ https://dash.plotly.com/cytoscape
 import dash_cytoscape as cyto
 from dash import Dash, html, dcc
 from dash import Input, Output, State, callback
-from dash_extensions import EventListener
-# from elements import default_gardening_elements as gardening_steps
-# from elements import user_elements as gardening_steps
+from dash_extensions import EventListener, Keyboard
 import elements_v2
 
 import callbacks_py
@@ -34,32 +32,35 @@ def main():
     app.layout = html.Div([
         # dcc.Store(id="new_node_storage", storage_type='session'),
         dcc.Store(id="new_node_storage"),
+        dcc.Store(id="new_edge_storage"),
         cyto.Cytoscape(
             id=id.CYTOSCPE,
             layout={'name': 'preset'},
-            style={'width': '50%', 'height': '600px'},
-            # elements=elements.user_elements,
+            style={'height': '800px'},
             elements=elements_v2.default_gardening_elements,
             stylesheet=stylesheet
         ),
         dcc.Markdown(id="modify_node_md"),
-        html.Div(id="input_container", style={'width': '50%', 'display': 'inline'},
+        html.Div(id="node_input_container", style={'width': '50%', 'display': 'inline'},
                  children=[
-                     dcc.Input(id='input_id', type='hidden'),
-                     dcc.Input(id='input_label', type='hidden'),                     
-                     dcc.Input(id='input_positon_x', type='hidden'),                     
-                     dcc.Input(id='input_positon_y', type='hidden'),                     
-                     html.Button('Save', id='save_btn', style={'display': 'none'})
+                     dcc.Input(id='input_node_id', type='hidden'),
+                     dcc.Input(id='input_node_label', type='hidden'),                     
+                     dcc.Input(id='input_node_label_hun', type='hidden'),                     
+                     dcc.Input(id='input_node_x', type='hidden'),                     
+                     dcc.Input(id='input_node_y', type='hidden'),                     
+                     html.Button('Save', id='save_node_btn', style={'display': 'none'})
                      ]
                  ),
         dcc.Markdown(id="log_new_node_position"),
         dcc.Markdown(id=id.MARKDOWN_UPPER),
         dcc.Markdown(id=id.MARKDOWN_LOWER),
-        dcc.Markdown(id="elements_md"),
-        EventListener(
+        EventListener(  # Study NOTE: https://pypi.org/project/dash-extensions/0.0.67/#:~:text=your%20Dash%20app.-,EventListener,-The%20EventListener%20component
             id=id.EVENTlISTENER_TEST,
             events=[event],
             logging=True
+        ),
+        Keyboard(
+            id="keyboard"
         )
     ])
     
