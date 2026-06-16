@@ -4,3 +4,5 @@ study NOTE: https://dash.plotly.com/cytoscape/reference#:~:text=is%20mutable%20o
     tree = utils.Tree(elements.default_gardening_elements)
     print("TREE: ---------------")
     print(str(tree.get_nodes())[:500])
+
+SUTDY NOTE: https://dash.plotly.com/devtools#callback-graph

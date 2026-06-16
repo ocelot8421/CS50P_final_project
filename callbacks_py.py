@@ -10,10 +10,8 @@ import file_io
 import uuid
 
 
-# SUTDY NOTE: https://dash.plotly.com/devtools#callback-graph
 
-
-## ------ STORAGE callbacks ---------------------------------------------
+## ------ CREATE NEW NODE  ---------------------------------------------
 
 @callback(Output("new_node_storage", "data"),
           Input(id.EVENTlISTENER_TEST, "event"),
@@ -61,20 +59,17 @@ def calc_empty_space_clicks(event, tapNode, storage):
         x1_tap = storage['tapNodes'][1]['renderedPosition']['x']
         x_click = storage['click_x_list'][0]
         x = x0 + (x1-x0)*(x_click-x0_tap)/(x1_tap-x0_tap)
-        # print("--- x ----: ", x0, x0_tap, "  ", x1, x1_tap, "  ", x_click, "-->", x)
         y0 = storage['tapNodes'][0]['relativePosition']['y']
         y0_tap = storage['tapNodes'][0]['renderedPosition']['y']
         y1 = storage['tapNodes'][1]['relativePosition']['y']
         y1_tap = storage['tapNodes'][1]['renderedPosition']['y']
         y_click = storage['click_y_list'][0]
         y = y0 + (y1-y0)*(y_click-y0_tap)/(y1_tap-y0_tap)
-        # print("--- y ----: ", y0, y0_tap, "  ", y1, y1_tap, "  ", y_click, "-->", y)
         storage['new_node_position'] = {'x': x, 'y': y}
                    
     return storage
 
 
-## ------ ELEMENTS callbacks --------------------------------------------
 @callback(Output(id.CYTOSCPE, 'elements'),
           Output("new_node_storage", "data", allow_duplicate=True),
           State(id.CYTOSCPE, 'elements'),
@@ -186,14 +181,15 @@ def save_new_node_into_py_file(save_click, elements):
 
 
 
-## ------ MARKDOWN callbacks ---------------------------------------------
+# ---------------------------------------- DISPLAY DATA ---------------------------------------
+
 
 @callback(Output("log_new_node_position", "children"),
           State(id.EVENTlISTENER_TEST, "event"),
           State(id.CYTOSCPE, 'tapNode'),
           Input("new_node_storage", "data"),
           prevent_initial_call=True)
-def click_event(e, tapNode, storage):
+def display_event(e, tapNode, storage):
     result_str = f"Event: \n* {e}"
     if storage is not None:
         result_str += f"\n\n storage: {storage}"
@@ -218,24 +214,18 @@ def displaySelectedNodeData(data_list):
     return "SelectedNodeData label:\n* " + "\n* ".join(task_list) #TODO handle empty row with dot
 
 
-@callback(Output(id.MARKDOWN_LOWER, 'children'),
-              Input('new_edge_storage', 'data'),
+@callback(Output(id.MARKDOWN_LOWER, 'children'),              
+              Input(id.CYTOSCPE, 'tapEdgeData'),
               prevent_initial_call=True)
-def display_data_in_lower_md(edge_storage):
-    print("edge_storage:-----------------")
-    print(edge_storage)
-    return "Edge storage: " + str(edge_storage)
+def display_data_in_lower_md(tapEdgeData):
+    print("tapEdgeData:-----------------")
+    print(tapEdgeData)
+    return "Tap Edge: " + str(tapEdgeData)
 
-@callback(Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
-              Input('new_edge_storage', 'data'),
-              State(id.CYTOSCPE, 'elements'),
-              prevent_initial_call=True)
-def display_data_in_lower_md(edge_storage, elements):
-    if edge_storage:
-        elements.extend(edge_storage)
-        file_io.save_elements_into_python_file(elements, "elements_v2.py")
-        edge_storage = []
-    return elements
+
+
+
+# ---------------------------------------- MODIFY EDGE ---------------------------------------
 
 
 is_alt_n_down = False
@@ -291,3 +281,15 @@ def add_edge(event, keydown, tpData, edge_storage):
     is_alt_n_up = False
     
     return edge_storage
+
+
+@callback(Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
+              Input('new_edge_storage', 'data'),
+              State(id.CYTOSCPE, 'elements'),
+              prevent_initial_call=True)
+def save_new_edge_into_py_file(edge_storage, elements):
+    if edge_storage:
+        elements.extend(edge_storage)
+        file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        edge_storage = []
+    return elements
