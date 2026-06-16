@@ -93,8 +93,8 @@ def creat_new_node(elements, storage):
                 {
                     'data': {
                         'id': new_id,
-                        'label': "belabela",
-                        'label_hun': 'bééélaaaa',
+                        'label': "new field",
+                        'label_hun': 'új mező',
                     },
                     'position': storage['new_node_position'],
                     'classes': 'medium_picture'
@@ -108,54 +108,40 @@ def creat_new_node(elements, storage):
     # Delete node if pressed alt+click
     # TODO
 
-
     return elements, storage
 
 
 
-## ------ INPUT callbacks ---------------------------------------------
+# ---------------------------------------- MODIFY NODE ---------------------------------------
 
-selected_by_altKey = False
-@callback(Output('input_container', 'children'),
+
+node_input_fields = [
+        ['data','id'],
+        ['data','label'], 
+        ['data','label_hun'],
+        ['position','x'],
+        ['position','y']
+    ]
+@callback(Output('node_input_container', 'children'),
           Input(id.CYTOSCPE, 'tapNode'),
           State(id.EVENTlISTENER_TEST, "event"),
           prevent_initial_call=True)
 def generate_input_fields(tapNode, event):
-    # Flags
-    global selected_by_altKey
-    selected_by_altKey = not selected_by_altKey
     try:
-        altKey_pressed = event['altKey']
+        is_alt_tapNode = event['altKey']
     except:
-        altKey_pressed = False
-    # Labels
-    data_field_names = ['id', 'label', 'label_hun']
-
+        is_alt_tapNode = False
+    
+    # Generate input fields if Alt + TapNode pressed
     result_fields = []
-    # tap first + alt key pressed --> return input fields TODO alt+other key
-    if altKey_pressed and selected_by_altKey:
-        title_md = dcc.Markdown(children=["Input fields"])
-        result_fields.extend([title_md])
-        for name in data_field_names:
+    if is_alt_tapNode:        
+        for name in node_input_fields:
             new_field = [
-                    name.capitalize()+':',
-                    dcc.Input(id='input_'+name, type='text', value=tapNode['data'][name], debounce=True) # Study NOTE: https://dash.plotly.com/dash-core-components/input#debounce-delays-the-input-processing
+                    name[1].capitalize()+':',
+                    dcc.Input(id='input_node_'+name[1], type='text', value=tapNode[name[0]][name[1]], debounce=True) # Study NOTE: https://dash.plotly.com/dash-core-components/input#debounce-delays-the-input-processing
                 ]
             result_fields.extend(new_field)
-        result_fields.extend([
-            "Positon x:",
-            dcc.Input(id='input_positon_x', type='text', value=tapNode['position']['x'], debounce=True),
-            "Positon y:",
-            dcc.Input(id='input_positon_y', type='text', value=tapNode['position']['y'], debounce=True),
-        ]) # TODO type = number
-        result_fields.extend([html.Button('Save', id='save_btn')])
-    # tap second + alt key pressed --> return data list TODO only alt key
-    elif altKey_pressed and not selected_by_altKey:
-        title_md = dcc.Markdown(children=["Node data"])
-        result_fields.extend([title_md])
-        new_field = [dcc.Markdown(children=[f"* {name}: {tapNode['data'][name]}" for name in data_field_names])]
-        new_field[0].children.extend([f"* position: {tapNode['position']}"])
-        result_fields.extend(new_field)
+        result_fields.extend([html.Button('Save', id='save_node_btn')])    
     else:
         result_fields = []
 
@@ -163,20 +149,22 @@ def generate_input_fields(tapNode, event):
 
 
 # Study NOTE: https://dash.plotly.com/dash-core-components/store#:~:text=closes.%0A%20%20%20%20dcc.Store(id%3D%7B-,%27type%27%3A%20%27storage%27%2C%20%27index%27%3A%20%27session%27,-%7D%2C%20storage_type%3D%27session%27)%2C%0A%0A%20%20%20%20html
-@callback(Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
-          Input('input_id', 'value'),
-          Input('input_label', 'value'),
-          Input('input_positon_x', 'value'),
-          Input('input_positon_y', 'value'),
-          State(id.CYTOSCPE, 'elements'),
-          prevent_initial_call=True)
-def modify_label(id, label, x, y, elements):
+@callback(
+    Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
+    [Input(f"input_node_{name[1]}", 'value') for name in node_input_fields],
+    State(id.CYTOSCPE, 'elements'),
+    prevent_initial_call=True
+    )
+def preshow_modified_node(id, label, label_hun, x, y, elements):
     if label is None:
         return no_update
     for element in elements:
         try:
             if element['data']['label'] == label or element['data']['id'] == id:
+                
+                # TODO iterate in node_input_fields and args and make equalient in one line
                 element['data']['label'] = label
+                element['data']['label_hun'] = label_hun
                 element['data']['id'] = id
                 element['position']['x'] = x
                 element['position']['y'] = y
@@ -185,9 +173,9 @@ def modify_label(id, label, x, y, elements):
     return elements
 
 
-@callback(Input('save_btn', 'n_clicks'),
+@callback(Input('save_node_btn', 'n_clicks'),
           State(id.CYTOSCPE, 'elements'))
-def save_input(save_click, elements):
+def save_new_node_into_py_file(save_click, elements):
     if save_click is None:
         raise PreventUpdate
     else:
@@ -290,18 +278,9 @@ def add_edge(event, keydown, tpData, edge_storage):
                 print("new_edge: ------")
                 print(str(new_edge))
                 edge_storage.extend([new_edge])
-                # file_io.save_elements_into_python_file(elements, "elements_v2.py")
                 end_nodes_set = set()
         except TypeError:
-            PreventUpdate
-    
-    # # Delete endnodes list if alt+n released
-    # try:
-    #     is_alt_n_up = keyup['key'] == 'n' and keyup['altKey']
-    #     if is_alt_n_up:
-    #         end_nodes = set()
-    # except:
-    #     end_nodes = set()
+            no_update
     
     # Inputs are need to update 
     is_alt_n_down = False

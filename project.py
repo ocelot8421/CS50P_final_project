@@ -37,18 +37,18 @@ def main():
             id=id.CYTOSCPE,
             layout={'name': 'preset'},
             style={'height': '800px'},
-            # elements=elements.user_elements,
             elements=elements_v2.default_gardening_elements,
             stylesheet=stylesheet
         ),
         dcc.Markdown(id="modify_node_md"),
-        html.Div(id="input_container", style={'width': '50%', 'display': 'inline'},
+        html.Div(id="node_input_container", style={'width': '50%', 'display': 'inline'},
                  children=[
-                     dcc.Input(id='input_id', type='hidden'),
-                     dcc.Input(id='input_label', type='hidden'),                     
-                     dcc.Input(id='input_positon_x', type='hidden'),                     
-                     dcc.Input(id='input_positon_y', type='hidden'),                     
-                     html.Button('Save', id='save_btn', style={'display': 'none'})
+                     dcc.Input(id='input_node_id', type='hidden'),
+                     dcc.Input(id='input_node_label', type='hidden'),                     
+                     dcc.Input(id='input_node_label_hun', type='hidden'),                     
+                     dcc.Input(id='input_node_x', type='hidden'),                     
+                     dcc.Input(id='input_node_y', type='hidden'),                     
+                     html.Button('Save', id='save_node_btn', style={'display': 'none'})
                      ]
                  ),
         dcc.Markdown(id="log_new_node_position"),
