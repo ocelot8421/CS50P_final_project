@@ -1,4 +1,4 @@
-from dash import html, Input, Output, State, callback, no_update
+from dash import html, Input, Output, State, callback, no_update, ctx
 from dash import dcc
 from dash_cytoscape import utils
 from dash_extensions import EventListener
@@ -162,12 +162,15 @@ def preshow_modified_node(id, label, label_hun, x, y, elements):
         try:
             if element['data']['label'] == label or element['data']['id'] == id:
                 
-                # TODO iterate in node_input_fields and args and make equalient in one line
-                element['data']['label'] = label
-                element['data']['label_hun'] = label_hun
-                element['data']['id'] = id
-                element['position']['x'] = x
-                element['position']['y'] = y
+                # Collect ctx values: STUDY NOTE: https://dash.plotly.com/determining-which-callback-input-changed
+                ctx_values = []
+                for _,v in ctx.inputs.items():
+                    ctx_values.append(v)
+                for i in range(len(node_input_fields)):
+                    key = node_input_fields[i]
+                    element[key[0]][key[1]] = ctx_values[i]
+                print("- element:", element)
+                ctx_values = []
         except:
             no_update
     return elements
