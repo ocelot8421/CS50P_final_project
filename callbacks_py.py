@@ -227,40 +227,84 @@ def displaySelectedNodeData(data_list):
     return "SelectedNodeData label:\n* " + "\n* ".join(task_list) #TODO handle empty row with dot
 
 
-# Return all node data
 @callback(Output(id.MARKDOWN_LOWER, 'children'),
-              Input(id.CYTOSCPE, 'tapNode'),
+              Input('new_edge_storage', 'data'),
               prevent_initial_call=True)
-def displaySelectedPosition(data_list):
+def display_data_in_lower_md(edge_storage):
+    print("edge_storage:-----------------")
+    print(edge_storage)
+    return "Edge storage: " + str(edge_storage)
 
-    # # study NOTE: https://dash.plotly.com/cytoscape/reference#:~:text=is%20mutable%20overall).-,utils.Tree,-A%20class%20to
-    # tree = utils.Tree(elements.default_gardening_elements)
-    # print("TREE: ---------------")
-    # print(str(tree.get_nodes())[:500])
-
-    if data_list is None:
-        return "TapNode has not been selected."
-    result_list = [f"type: {type(data_list)}"]
-
-    for i in data_list:
-        result_list.append(f"{i}: {str(data_list[i])[:140]}")
-    return "TapNode:\n* " + "\n* ".join(result_list)
-
-
-@callback(Output('elements_md', 'children'),
-          Input(id.CYTOSCPE, 'elements'),
-          State(id.CYTOSCPE, 'tapNode'),
-          prevent_initial_call=True)
-def insert_new_node(elements, tapNode):
-    result_list = []
-    for element in elements:
-        for key_0 in element:
-            result_list.append(f"{key_0}: {element[key_0]}")
-        result_list.append("\n\n")
-    return "Elements:\n* " + "\n* ".join(result_list)
+@callback(Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
+              Input('new_edge_storage', 'data'),
+              State(id.CYTOSCPE, 'elements'),
+              prevent_initial_call=True)
+def display_data_in_lower_md(edge_storage, elements):
+    if edge_storage:
+        elements.extend(edge_storage)
+        edge_storage = []
+    return elements
 
 
-@callback(Input("keyboard", "keydown"))
-def keydown(keydown):
-    print("Key EVENT-------------")
-    print(keydown)
+is_alt_n_down = False
+is_alt_n_up = False
+is_alt_click = False
+end_nodes_set = set()
+@callback(
+    Output('new_edge_storage', 'data'),
+    State(id.EVENTlISTENER_TEST, "event"),
+    State("keyboard", "keydown"),
+    # Input("keyboard", "keyup"),
+    Input(id.CYTOSCPE, "tapNodeData"),
+    State('new_edge_storage', 'data'),
+    prevent_initial_call= True
+    )
+# def add_edge(event, keydown, keyup, tpData, edge_storage):
+def add_edge(event, keydown, tpData, edge_storage):
+    global is_alt_n_down
+    global is_alt_click
+    global end_nodes_set
+    
+    # print("- Edge_storage: ", type(edge_storage))
+    
+    if not edge_storage: edge_storage = []
+    try:
+        is_alt_n_down = keydown['key'] == 'n' and keydown['altKey']
+        is_alt_click = event['altKey']
+    except TypeError:
+        is_alt_n_down = False
+        is_alt_click = False
+    
+    if is_alt_click and is_alt_n_down:
+        try:
+            if len(end_nodes_set) < 2:
+                end_nodes_set.add(tpData['id'])
+                print("end_nodes: - - - - ")
+                print(end_nodes_set)
+            elif len(end_nodes_set) == 2:
+                new_id = str(uuid.uuid4())
+                end_nodes_list = list(end_nodes_set)
+                new_edge = {'data': {'source': f"{end_nodes_list[0]}", 'target': f"{end_nodes_list[1]}", 'id': new_id} }
+                # new_edge = {'data': {} }
+                print("new_edge: ------")
+                print(str(new_edge))
+                edge_storage.extend([new_edge])
+                # file_io.save_elements_into_python_file(elements, "elements_v2.py")
+                end_nodes_set = set()
+        except TypeError:
+            PreventUpdate
+    
+    # # Delete endnodes list if alt+n released
+    # try:
+    #     is_alt_n_up = keyup['key'] == 'n' and keyup['altKey']
+    #     if is_alt_n_up:
+    #         end_nodes = set()
+    # except:
+    #     end_nodes = set()
+    
+    # Inputs are need to update 
+    is_alt_n_down = False
+    is_alt_click = False
+    is_alt_n_up = False
+    
+    return edge_storage

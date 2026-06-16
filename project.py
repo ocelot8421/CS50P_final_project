@@ -32,10 +32,11 @@ def main():
     app.layout = html.Div([
         # dcc.Store(id="new_node_storage", storage_type='session'),
         dcc.Store(id="new_node_storage"),
+        dcc.Store(id="new_edge_storage"),
         cyto.Cytoscape(
             id=id.CYTOSCPE,
             layout={'name': 'preset'},
-            style={'width': '50%', 'height': '600px'},
+            style={'height': '800px'},
             # elements=elements.user_elements,
             elements=elements_v2.default_gardening_elements,
             stylesheet=stylesheet
@@ -53,7 +54,6 @@ def main():
         dcc.Markdown(id="log_new_node_position"),
         dcc.Markdown(id=id.MARKDOWN_UPPER),
         dcc.Markdown(id=id.MARKDOWN_LOWER),
-        dcc.Markdown(id="elements_md"),
         EventListener(  # Study NOTE: https://pypi.org/project/dash-extensions/0.0.67/#:~:text=your%20Dash%20app.-,EventListener,-The%20EventListener%20component
             id=id.EVENTlISTENER_TEST,
             events=[event],
