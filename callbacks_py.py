@@ -168,7 +168,6 @@ def preshow_modified_node(id, label, label_hun, x, y, elements):
                 for i in range(len(node_input_fields)):
                     key = node_input_fields[i]
                     element[key[0]][key[1]] = ctx_values[i]
-                print("- element:", element)
                 ctx_values = []
         except:
             no_update
@@ -224,8 +223,6 @@ def displaySelectedNodeData(data_list):
               Input(id.CYTOSCPE, 'tapEdgeData'),
               prevent_initial_call=True)
 def display_data_in_lower_md(tapEdgeData):
-    print("tapEdgeData:-----------------")
-    print(tapEdgeData)
     return "Tap Edge: " + str(tapEdgeData)
 
 
@@ -243,19 +240,15 @@ end_nodes_set = set()
     Output('new_edge_storage', 'data'),
     State(id.EVENTlISTENER_TEST, "event"),
     State("keyboard", "keydown"),
-    # Input("keyboard", "keyup"),
     Input(id.CYTOSCPE, "tapNodeData"),
     State('new_edge_storage', 'data'),
     prevent_initial_call= True
     )
-# def add_edge(event, keydown, keyup, tpData, edge_storage):
 def add_edge(event, keydown, tpData, edge_storage):
     global is_alt_n_down
     global is_alt_click
     global end_nodes_set
-    
-    # print("- Edge_storage: ", type(edge_storage))
-    
+        
     if not edge_storage: edge_storage = []
     try:
         is_alt_n_down = keydown['key'] == 'n' and keydown['altKey']
@@ -268,15 +261,10 @@ def add_edge(event, keydown, tpData, edge_storage):
         try:
             if len(end_nodes_set) < 2:
                 end_nodes_set.add(tpData['id'])
-                print("end_nodes: - - - - ")
-                print(end_nodes_set)
             elif len(end_nodes_set) == 2:
                 new_id = str(uuid.uuid4())
                 end_nodes_list = list(end_nodes_set)
                 new_edge = {'data': {'source': f"{end_nodes_list[0]}", 'target': f"{end_nodes_list[1]}", 'id': new_id} }
-                # new_edge = {'data': {} }
-                print("new_edge: ------")
-                print(str(new_edge))
                 edge_storage.extend([new_edge])
                 end_nodes_set = set()
         except TypeError:
