@@ -288,3 +288,53 @@ def save_new_edge_into_py_file(edge_storage, elements):
         file_io.save_elements_into_python_file(elements, "elements_v2.py")
         edge_storage = []
     return elements
+
+
+
+# --------------------------------------------------------------------------------------------
+# ---------------------------------------- MODIFY EDGE ---------------------------------------
+# --------------------------------------------------------------------------------------------
+
+
+@callback(Output('keyboard_storage', 'data'),
+    State('keyboard_storage', 'data'),
+    Input("keyboard", "keydown"),
+    Input("keyboard", "n_keydowns"),
+    prevent_initial_call=True)
+def set_True_alt_M_down(keyboard_storage, keydown, n_keydowns): 
+    if not keyboard_storage:
+        keyboard_storage = {}
+        keyboard_storage['is_alt_M_down'] = False
+    if keydown:
+        keyboard_storage['is_alt_M_down'] = keydown['key'] == 'm' and keydown['altKey']
+    else:
+        no_update
+    return keyboard_storage
+
+
+@callback(Output('keyboard_storage', 'data', allow_duplicate=True),
+    State('keyboard_storage', 'data'),
+    Input("keyboard", "keyup"),
+    Input("keyboard", "n_keyups"),
+    prevent_initial_call=True)
+def set_False_alt_M_down(keyboard_storage, keyup, n_keyups): 
+    if not keyboard_storage:
+        keyboard_storage = {}
+        keyboard_storage['is_alt_M_down'] = False
+    if keyup:
+        if keyup['key'] == 'm':
+            keyboard_storage['is_alt_M_down'] = False
+        print("--keyup:", keyup['key'])
+    else:
+        no_update
+    return keyboard_storage
+          
+            
+@callback(Input(id.EVENTlISTENER_TEST, "event"),
+          State('keyboard_storage', 'data'),
+          prevent_initial_call=True)
+def show_key_downs_during_clicking(click, keyboard_storage):
+    if not keyboard_storage: # TODO encapsulate (3x appears at least)
+        keyboard_storage = {}
+        keyboard_storage['is_alt_M_down'] = False
+    print("...is_alt_M_down:", keyboard_storage['is_alt_M_down'])

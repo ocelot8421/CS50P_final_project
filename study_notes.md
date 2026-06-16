@@ -6,3 +6,6 @@ study NOTE: https://dash.plotly.com/cytoscape/reference#:~:text=is%20mutable%20o
     print(str(tree.get_nodes())[:500])
 
 SUTDY NOTE: https://dash.plotly.com/devtools#callback-graph
+
+Input("keyboard", "n_keydowns"),
+Study NOTE: https://github.com/emilhe/dash-extensions/issues/11#:~:text=%5BInput(%22keyboard%22%2C%20%22n_keydowns%22)%5D%2C

@@ -33,6 +33,7 @@ def main():
         # dcc.Store(id="new_node_storage", storage_type='session'),
         dcc.Store(id="new_node_storage"),
         dcc.Store(id="new_edge_storage"),
+        dcc.Store(id="keyboard_storage"),
         cyto.Cytoscape(
             id=id.CYTOSCPE,
             layout={'name': 'preset'},

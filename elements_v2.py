@@ -33,4 +33,5 @@ default_gardening_elements = [
     {'data': {'id': 'cf8cb797-fc74-4b77-a9a8-72c563f2207f', 'label': 'Node for deleting', 'label_hun': 'Törlendő mező'}, 'position': {'x': -387.00910824751537, 'y': 295.6515210992263}, 'classes': 'medium_picture'},
     {'data': {'id': 'c32a6a42-7f03-4262-9214-4121f172fc27', 'label': 'modify_edge()', 'label_hun': 'új mező'}, 'position': {'x': -585.4690595497556, 'y': 340.8213879636277}, 'classes': 'medium_picture'},
     {'data': {'source': 'c32a6a42-7f03-4262-9214-4121f172fc27', 'target': '1c2b992c-7796-4877-abd5-f795c6d2942c', 'id': '33764f79-32ad-4188-a538-dd2c2d645e77'}},
+    {'data': {'id': '13bffc61-6b8b-42dd-81a8-36d972bb2e38', 'label': 'Generate Github branch from Clickup Ticket', 'label_hun': 'ClickUp ticketből generálni GitHub branchet'}, 'position': {'x': -1334.1948402881094, 'y': 473.69385046085677}, 'classes': 'medium_picture'},
 ]
