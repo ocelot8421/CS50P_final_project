@@ -16,7 +16,7 @@ import uuid
 
 
 @callback(Output("new_node_storage", "data"),
-          Input(id.EVENTlISTENER_TEST, "event"),
+          Input(id.EVENTlISTENER, "event"),
           Input(id.CYTOSCPE, 'tapNode'),
           State("new_node_storage", "data"),
           prevent_initial_call=True)
@@ -123,7 +123,7 @@ node_input_fields = [
     ]
 @callback(Output('node_input_container', 'children'),
           Input(id.CYTOSCPE, 'tapNode'),
-          State(id.EVENTlISTENER_TEST, "event"),
+          State(id.EVENTlISTENER, "event"),
           prevent_initial_call=True)
 def generate_node_input_fields(tapNode, event):
     try:
@@ -190,7 +190,7 @@ def save_new_node_into_py_file(save_click, elements):
 
 
 @callback(Output("log_new_node_position", "children"),
-          State(id.EVENTlISTENER_TEST, "event"),
+          State(id.EVENTlISTENER, "event"),
           State(id.CYTOSCPE, 'tapNode'),
           Input("new_node_storage", "data"),
           prevent_initial_call=True)
@@ -238,7 +238,7 @@ is_alt_click = False
 end_nodes_set = set()
 @callback(
     Output('new_edge_storage', 'data'),
-    State(id.EVENTlISTENER_TEST, "event"),
+    State(id.EVENTlISTENER, "event"),
     State("keyboard", "keydown"),
     Input(id.CYTOSCPE, "tapNodeData"),
     State('new_edge_storage', 'data'),
@@ -325,12 +325,12 @@ def set_False_alt_M_down(keyboard_storage, keyup, n_keyups):
 edge_input_fields = ['source', 'target', 'id']
 @callback(
     Output('edge_input_container', 'children'),
-    Input(id.EVENTlISTENER_TEST, "event"),
-    State(id.CYTOSCPE, 'tapEdgeData'),
+    State(id.EVENTlISTENER, 'event'),
+    Input(id.CYTOSCPE, 'tapEdgeData'),
     State('keyboard_storage', 'data'),
     prevent_initial_call=True
 )
-def generate_edge_input_fields(event, tapEdgeData, keyboard_storage, ):
+def generate_edge_input_fields(event, tapEdgeData, keyboard_storage):
     result_fields = []
     if keyboard_storage['is_alt_M_down']:        
         for name in edge_input_fields:
@@ -340,6 +340,41 @@ def generate_edge_input_fields(event, tapEdgeData, keyboard_storage, ):
                 ]
             result_fields.extend(new_field)
         result_fields.extend([html.Button('Save', id='save_edge_btn')])
-    else:
-        result_fields = []
     return result_fields
+
+@callback(
+    Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
+    [Input(f"input_edge_{name}", 'value') for name in edge_input_fields],
+    State(id.CYTOSCPE, 'elements'),
+    prevent_initial_call=True
+    )
+def preshow_modified_edge(source, target, id, elements):
+    if id is None:
+        return no_update
+    for element in elements:
+        # try:
+            if element['data']['id'] == id:
+                
+                # Collect ctx values: STUDY NOTE: https://dash.plotly.com/determining-which-callback-input-changed
+                ctx_values = []
+                for _,v in ctx.inputs.items():
+                    ctx_values.append(v)
+                for i in range(len(edge_input_fields)):
+                    key = edge_input_fields[i]
+                    element['data'][key] = ctx_values[i]
+                print("--ctx_values: ", ctx_values)
+                print("--edge_input_fields: ", edge_input_fields)
+                print("--element: ", element)
+                ctx_values = []
+        # except:
+        #     no_update
+    return elements
+
+
+@callback(Input('save_edge_btn', 'n_clicks'),
+          State(id.CYTOSCPE, 'elements'))
+def save_new_node_into_py_file(save_click, elements):
+    if save_click is None:
+        raise PreventUpdate
+    else:
+        file_io.save_elements_into_python_file(elements, "elements_v2.py")

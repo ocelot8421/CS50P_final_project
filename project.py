@@ -66,7 +66,7 @@ def main():
         dcc.Markdown(id=id.MARKDOWN_UPPER),
         dcc.Markdown(id=id.MARKDOWN_LOWER),
         EventListener(  # Study NOTE: https://pypi.org/project/dash-extensions/0.0.67/#:~:text=your%20Dash%20app.-,EventListener,-The%20EventListener%20component
-            id=id.EVENTlISTENER_TEST,
+            id=id.EVENTlISTENER,
             events=[event],
             logging=True
         ),
