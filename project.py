@@ -51,7 +51,8 @@ def main():
                     dcc.Input(id='input_node_label_hun', type='hidden'),                     
                     dcc.Input(id='input_node_x', type='hidden'),                     
                     dcc.Input(id='input_node_y', type='hidden'),                     
-                    html.Button('Save', id='save_node_btn', style={'display': 'none'})
+                    html.Button('Save Node', id='save_node_btn', style={'display': 'none'}),
+                    html.Button('Delete Node', id='delete_node_btn', style={'display': 'none'})
                     ]
                 ),
         html.Div(id="edge_input_container", style={'width': '50%', 'display': 'inline'},

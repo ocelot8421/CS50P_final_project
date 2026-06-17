@@ -101,9 +101,6 @@ def creat_new_node(elements, storage):
         storage['new_node_appendable'] = False
         
         file_io.save_elements_into_python_file(elements, "elements_v2.py")
-            
-    # Delete node if pressed alt+click
-    # TODO
 
     return elements, storage
 
@@ -140,7 +137,8 @@ def generate_node_input_fields(tapNode, event):
                     dcc.Input(id='input_node_'+name[1], type='text', value=tapNode[name[0]][name[1]], debounce=True) # Study NOTE: https://dash.plotly.com/dash-core-components/input#debounce-delays-the-input-processing
                 ]
             result_fields.extend(new_field)
-        result_fields.extend([html.Button('Save', id='save_node_btn')])    
+        result_fields.extend([html.Button('Save Node', id='save_node_btn')]),
+        result_fields.extend([html.Button('Delete Node', id='delete_node_btn')])    
     else:
         result_fields = []
 
@@ -181,6 +179,36 @@ def save_new_node_into_py_file(save_click, elements):
         raise PreventUpdate
     else:
         file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        
+@callback(
+    Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
+    Input('delete_node_btn', 'n_clicks'),
+    State(id.CYTOSCPE, 'elements'),
+    State('input_node_id', 'value'),
+    prevent_initial_call=True
+    )
+def preshow_delete_node(delete_btn, elements,id):
+    if delete_btn is None:
+        raise PreventUpdate # Study NOTE: stop function
+        # no_update # Study NOTE: continue function (but not update output????)
+    for element in elements:
+        try:
+            if element['data']['id'] == id:
+                index = elements.index(element)
+                             
+                print("--delete_btn:", str(delete_btn)[:50])
+                print("--index:", index)
+                print("--element:", str(element)[:140])
+                vmi = [1,2,3]
+                vmi.pop(vmi.index(2))
+                print(vmi)
+                elements.pop(index)
+                print("")
+                file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        except:
+            no_update
+    return elements
+    # else:
 
 
 
