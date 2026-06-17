@@ -36,4 +36,6 @@ default_gardening_elements = [
     {'data': {'id': '13bffc61-6b8b-42dd-81a8-36d972bb2e38', 'label': 'Generate Github branch from Clickup Ticket', 'label_hun': 'ClickUp ticketből generálni GitHub branchet'}, 'position': {'x': -1334.1948402881094, 'y': 473.69385046085677}, 'classes': 'medium_picture'},
     {'data': {'id': 'abef28f8-5df9-47a1-8bc7-a0bb3b9e8d45', 'label': 'alt + m during clickings KÉSZ :)', 'label_hun': 'új mező'}, 'position': {'x': -468.64342945293146, 'y': 517.5053276185429}, 'classes': 'medium_picture'},
     {'data': {'source': 'c32a6a42-7f03-4262-9214-4121f172fc27', 'target': 'abef28f8-5df9-47a1-8bc7-a0bb3b9e8d45', 'id': '6d5fea95-e6a6-4b40-83c0-49fef5d05d0f'}},
+    {'data': {'id': '32611a7f-05f9-4d78-9161-d31afee4183a', 'label': 'new field', 'label_hun': 'új mező'}, 'position': {'x': -1206.322532286014, 'y': -128.13044587213022}, 'classes': 'medium_picture'},
+    {'data': {'source': 'c9a0e3da-0d43-4b8f-b471-31775d3c4e5f', 'target': '32611a7f-05f9-4d78-9161-d31afee4183a', 'id': '0d0101bd-6005-408d-895d-86fdaf887d3a'}},
 ]

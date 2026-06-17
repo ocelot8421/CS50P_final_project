@@ -33,7 +33,9 @@ def main():
         # dcc.Store(id="new_node_storage", storage_type='session'),
         dcc.Store(id="new_node_storage"),
         dcc.Store(id="new_edge_storage"),
-        dcc.Store(id="keyboard_storage"),
+        dcc.Store(id="keyboard_storage",
+                  data = {
+                      'is_alt_M_down': False}),
         cyto.Cytoscape(
             id=id.CYTOSCPE,
             layout={'name': 'preset'},
@@ -43,15 +45,23 @@ def main():
         ),
         dcc.Markdown(id="modify_node_md"),
         html.Div(id="node_input_container", style={'width': '50%', 'display': 'inline'},
-                 children=[
-                     dcc.Input(id='input_node_id', type='hidden'),
-                     dcc.Input(id='input_node_label', type='hidden'),                     
-                     dcc.Input(id='input_node_label_hun', type='hidden'),                     
-                     dcc.Input(id='input_node_x', type='hidden'),                     
-                     dcc.Input(id='input_node_y', type='hidden'),                     
-                     html.Button('Save', id='save_node_btn', style={'display': 'none'})
-                     ]
-                 ),
+                children=[
+                    dcc.Input(id='input_node_id', type='hidden'),
+                    dcc.Input(id='input_node_label', type='hidden'),                     
+                    dcc.Input(id='input_node_label_hun', type='hidden'),                     
+                    dcc.Input(id='input_node_x', type='hidden'),                     
+                    dcc.Input(id='input_node_y', type='hidden'),                     
+                    html.Button('Save', id='save_node_btn', style={'display': 'none'})
+                    ]
+                ),
+        html.Div(id="edge_input_container", style={'width': '50%', 'display': 'inline'},
+                children=[
+                    dcc.Input(id='input_edge_id', type='hidden'),
+                    dcc.Input(id='input_edge_source', type='hidden'),                     
+                    dcc.Input(id='input_edge_target', type='hidden'),
+                    html.Button('Save', id='save_edge_btn', style={'display': 'none'})
+                    ]
+                ),
         dcc.Markdown(id="log_new_node_position"),
         dcc.Markdown(id=id.MARKDOWN_UPPER),
         dcc.Markdown(id=id.MARKDOWN_LOWER),

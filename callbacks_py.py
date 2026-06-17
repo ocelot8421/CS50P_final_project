@@ -125,7 +125,7 @@ node_input_fields = [
           Input(id.CYTOSCPE, 'tapNode'),
           State(id.EVENTlISTENER_TEST, "event"),
           prevent_initial_call=True)
-def generate_input_fields(tapNode, event):
+def generate_node_input_fields(tapNode, event):
     try:
         is_alt_tapNode = event['altKey']
     except:
@@ -302,9 +302,6 @@ def save_new_edge_into_py_file(edge_storage, elements):
     Input("keyboard", "n_keydowns"),
     prevent_initial_call=True)
 def set_True_alt_M_down(keyboard_storage, keydown, n_keydowns): 
-    if not keyboard_storage:
-        keyboard_storage = {}
-        keyboard_storage['is_alt_M_down'] = False
     if keydown:
         keyboard_storage['is_alt_M_down'] = keydown['key'] == 'm' and keydown['altKey']
     else:
@@ -318,23 +315,31 @@ def set_True_alt_M_down(keyboard_storage, keydown, n_keydowns):
     Input("keyboard", "n_keyups"),
     prevent_initial_call=True)
 def set_False_alt_M_down(keyboard_storage, keyup, n_keyups): 
-    if not keyboard_storage:
-        keyboard_storage = {}
-        keyboard_storage['is_alt_M_down'] = False
     if keyup:
         if keyup['key'] == 'm':
             keyboard_storage['is_alt_M_down'] = False
-        print("--keyup:", keyup['key'])
     else:
         no_update
     return keyboard_storage
           
-            
-@callback(Input(id.EVENTlISTENER_TEST, "event"),
-          State('keyboard_storage', 'data'),
-          prevent_initial_call=True)
-def show_key_downs_during_clicking(click, keyboard_storage):
-    if not keyboard_storage: # TODO encapsulate (3x appears at least)
-        keyboard_storage = {}
-        keyboard_storage['is_alt_M_down'] = False
-    print("...is_alt_M_down:", keyboard_storage['is_alt_M_down'])
+edge_input_fields = ['source', 'target', 'id']
+@callback(
+    Output('edge_input_container', 'children'),
+    Input(id.EVENTlISTENER_TEST, "event"),
+    State(id.CYTOSCPE, 'tapEdgeData'),
+    State('keyboard_storage', 'data'),
+    prevent_initial_call=True
+)
+def generate_edge_input_fields(event, tapEdgeData, keyboard_storage, ):
+    result_fields = []
+    if keyboard_storage['is_alt_M_down']:        
+        for name in edge_input_fields:
+            new_field = [
+                    name.capitalize()+':',
+                    dcc.Input(id='input_edge_'+name, type='text', value=tapEdgeData[name], debounce=True) # Study NOTE: https://dash.plotly.com/dash-core-components/input#debounce-delays-the-input-processing
+                ]
+            result_fields.extend(new_field)
+        result_fields.extend([html.Button('Save', id='save_edge_btn')])
+    else:
+        result_fields = []
+    return result_fields
