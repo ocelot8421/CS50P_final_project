@@ -11,7 +11,7 @@ POLYMERSAND =         '3_4_0'
 WATERING =        '1_5_0'
 
 # Event listener
-EVENTlISTENER_TEST = 'el'
+EVENTlISTENER = 'el'
 coordinate_x = 'clientX'
 coordinate_y = 'clientY'
 # coordinate_x = 'screenX'
