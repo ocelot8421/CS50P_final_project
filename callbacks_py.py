@@ -340,6 +340,7 @@ def generate_edge_input_fields(event, tapEdgeData, keyboard_storage):
                 ]
             result_fields.extend(new_field)
         result_fields.extend([html.Button('Save', id='save_edge_btn')])
+        result_fields.extend([html.Button('Flip', id='flip_edge_btn')])
     return result_fields
 
 @callback(
@@ -362,9 +363,6 @@ def preshow_modified_edge(source, target, id, elements):
                 for i in range(len(edge_input_fields)):
                     key = edge_input_fields[i]
                     element['data'][key] = ctx_values[i]
-                print("--ctx_values: ", ctx_values)
-                print("--edge_input_fields: ", edge_input_fields)
-                print("--element: ", element)
                 ctx_values = []
         # except:
         #     no_update
@@ -378,3 +376,18 @@ def save_new_node_into_py_file(save_click, elements):
         raise PreventUpdate
     else:
         file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        
+
+@callback(
+    Output('input_edge_source', 'value'),
+    Output('input_edge_target', 'value'),
+    Input('flip_edge_btn', 'n_clicks'),
+    State('input_edge_source', 'value'),
+    State('input_edge_target', 'value'),
+    prevent_initial_call = True
+    )
+def save_new_node_into_py_file(flip_click, source_in, target_in):
+    if flip_click is None:
+        raise PreventUpdate
+    # return inputs ordered backwards
+    return target_in, source_in

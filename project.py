@@ -59,7 +59,8 @@ def main():
                     dcc.Input(id='input_edge_id', type='hidden'),
                     dcc.Input(id='input_edge_source', type='hidden'),                     
                     dcc.Input(id='input_edge_target', type='hidden'),
-                    html.Button('Save', id='save_edge_btn', style={'display': 'none'})
+                    html.Button('Save', id='save_edge_btn', style={'display': 'none'}),
+                    html.Button('Flip', id='flip_edge_btn', style={'display': 'none'})
                     ]
                 ),
         dcc.Markdown(id="log_new_node_position"),
