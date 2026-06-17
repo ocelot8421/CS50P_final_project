@@ -52,7 +52,7 @@ def main():
                     dcc.Input(id='input_node_x', type='hidden'),                     
                     dcc.Input(id='input_node_y', type='hidden'),                     
                     html.Button('Save Node', id='save_node_btn', style={'display': 'none'}),
-                    html.Button('Delete Node', id='delete_node_btn', style={'display': 'none'})
+                    html.Button('Delete Node with Edges', id='delete_node_btn', style={'display': 'none'})
                     ]
                 ),
         html.Div(id="edge_input_container", style={'width': '50%', 'display': 'inline'},
@@ -60,8 +60,9 @@ def main():
                     dcc.Input(id='input_edge_id', type='hidden'),
                     dcc.Input(id='input_edge_source', type='hidden'),                     
                     dcc.Input(id='input_edge_target', type='hidden'),
-                    html.Button('Save', id='save_edge_btn', style={'display': 'none'}),
-                    html.Button('Flip', id='flip_edge_btn', style={'display': 'none'})
+                    html.Button('Save Edge', id='save_edge_btn', style={'display': 'none'}),
+                    html.Button('Flip', id='flip_edge_btn', style={'display': 'none'}),
+                    html.Button('Delete Edge', id='delete_edge_btn', style={'display': 'none'})
                     ]
                 ),
         dcc.Markdown(id="log_new_node_position"),

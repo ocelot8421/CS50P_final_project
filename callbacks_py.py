@@ -138,7 +138,7 @@ def generate_node_input_fields(tapNode, event):
                 ]
             result_fields.extend(new_field)
         result_fields.extend([html.Button('Save Node', id='save_node_btn')]),
-        result_fields.extend([html.Button('Delete Node', id='delete_node_btn')])    
+        result_fields.extend([html.Button('Delete Node with Edges', id='delete_node_btn')])    
     else:
         result_fields = []
 
@@ -179,7 +179,8 @@ def save_new_node_into_py_file(save_click, elements):
         raise PreventUpdate
     else:
         file_io.save_elements_into_python_file(elements, "elements_v2.py")
-        
+
+    
 @callback(
     Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
     Input('delete_node_btn', 'n_clicks'),
@@ -191,30 +192,31 @@ def preshow_delete_node(delete_btn, elements,id):
     if delete_btn is None:
         raise PreventUpdate # Study NOTE: stop function
         # no_update # Study NOTE: continue function (but not update output????)
+    
+    elements_remove = []
+    elements_remained = []
     for element in elements:
         try:
-            # Delete node and contected edges
+            # Delete node and contected edges TODO: seperate edges and nodes from each others
+            # if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
+            #     index = elements.index(element)                             
+            #     elements.pop(index)
             if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
-                index = elements.index(element)
-                             
-                print("--delete_btn:", str(delete_btn)[:50])
-                print("--index:", index)
-                print("--element:", str(element)[:140])
-                vmi = [1,2,3]
-                vmi.pop(vmi.index(2))
-                print(vmi)
-                elements.pop(index)
-                print("")
-                file_io.save_elements_into_python_file(elements, "elements_v2.py")
+                elements_remove.append(element)                            
         except:
             no_update
+    for element in elements:
+        if element not in elements_remove:
+            elements_remained.append(element)
+            
+    elements = elements_remained
+    file_io.save_elements_into_python_file(elements, "elements_v2.py")
     return elements
-    # else:
 
 
 
 # --------------------------------------------------------------------------------------------
-# ---------------------------------------- DISPLAY DATA ---------------------------------------
+# ---------------------------------------- DISPLAY DATA --------------------------------------
 # --------------------------------------------------------------------------------------------
 
 
@@ -366,8 +368,9 @@ def generate_edge_input_fields(event, tapEdgeData, keyboard_storage):
                     dcc.Input(id='input_edge_'+name, type='text', value=tapEdgeData[name], debounce=True) # Study NOTE: https://dash.plotly.com/dash-core-components/input#debounce-delays-the-input-processing
                 ]
             result_fields.extend(new_field)
-        result_fields.extend([html.Button('Save', id='save_edge_btn')])
+        result_fields.extend([html.Button('Save Edge', id='save_edge_btn')])
         result_fields.extend([html.Button('Flip', id='flip_edge_btn')])
+        result_fields.extend([html.Button('Delete Edge', id='delete_edge_btn')])
     return result_fields
 
 @callback(
@@ -418,3 +421,26 @@ def flip_arrow_input_data(flip_click, source_in, target_in):
         raise ValueError.add_note("flip_click is None") # BUG arrow flip instabile, maybe should avoid dublicate uotput (elements)
     # return inputs ordered backwards
     return target_in, source_in
+
+
+@callback(
+    Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
+    Input('delete_edge_btn', 'n_clicks'),
+    State(id.CYTOSCPE, 'elements'),
+    State('input_edge_id', 'value'),
+    prevent_initial_call=True
+    )
+def preshow_delete_edge(delete_edge_btn, elements,id_edge):
+    if delete_edge_btn is None:
+        raise PreventUpdate # Study NOTE: stop function
+        # no_update # Study NOTE: continue function (but not update output????)
+    for element in elements:
+        try:
+            # Delete edge
+            if element['data']['id'] == id_edge:
+                index = elements.index(element)                             
+                elements.pop(index)
+                file_io.save_elements_into_python_file(elements, "elements_v2.py") # Logical BUG: rewrite elements file in every true loop
+        except:
+            no_update
+    return elements
