@@ -206,17 +206,15 @@ def display_event(e, tapNode, storage):
     return result_str + f"\n\n TapNode: \n* renderedPosition: {tapNode['renderedPosition']} \n* timeStamp: {tapNode['timeStamp']} \n* relativePosition: {tapNode['relativePosition']}"
 
 
-# Return a list of labels about selected nodes
-@callback(Output(id.MARKDOWN_UPPER, 'children'),
-              Input(id.CYTOSCPE, 'selectedNodeData'))
-def displaySelectedNodeData(data_list):
-    if data_list is None or len(data_list) == 0:
-        return f"SelectedNodeData: Node has not been selected.{type(data_list)}"
-    task_list = []
-    for data in data_list:
-        for e in data:
-            task_list.append(f"{e}: {data[e][:140]}")
-    return "SelectedNodeData label:\n* " + "\n* ".join(task_list) #TODO handle empty row with dot
+@callback(
+    Output(id.MARKDOWN_UPPER, 'children'),
+    Input('keyboard_storage', 'data')
+    )
+def display_in_upper_md(keyboard_storage):
+    result_str = ["keyboard_storage: "]
+    for i in keyboard_storage:
+        result_str.append(f"\n* {i}: {keyboard_storage[i]}")
+    return result_str
 
 
 @callback(Output(id.MARKDOWN_LOWER, 'children'),              
@@ -386,8 +384,8 @@ def save_new_node_into_py_file(save_click, elements):
     State('input_edge_target', 'value'),
     prevent_initial_call = True
     )
-def save_new_node_into_py_file(flip_click, source_in, target_in):
+def flip_arrow_input_data(flip_click, source_in, target_in):
     if flip_click is None:
-        raise PreventUpdate
+        raise ValueError.add_note("flip_click is None") # BUG arrow flip instabile, maybe should avoid dublicate uotput (elements)
     # return inputs ordered backwards
     return target_in, source_in
