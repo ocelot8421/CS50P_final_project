@@ -193,7 +193,8 @@ def preshow_delete_node(delete_btn, elements,id):
         # no_update # Study NOTE: continue function (but not update output????)
     for element in elements:
         try:
-            if element['data']['id'] == id:
+            # Delete node and contected edges
+            if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
                 index = elements.index(element)
                              
                 print("--delete_btn:", str(delete_btn)[:50])
