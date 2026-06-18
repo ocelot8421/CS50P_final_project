@@ -11,7 +11,6 @@ import elements_v2
 
 import callbacks_py
 import id
-import elements
 from style import stylesheet
 
 # NOTE for study: https://docs.python.org/3/library/pprint.html#module-pprint

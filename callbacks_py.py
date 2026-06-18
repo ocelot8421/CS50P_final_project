@@ -5,7 +5,6 @@ from dash_extensions import EventListener
 from dash.exceptions import PreventUpdate #Sutdy NOTE: https://dash.plotly.com/advanced-callbacks#:~:text=Input%2C%20Output%2C%20callback-,from%20dash.exceptions%20import%20PreventUpdate,-external_stylesheets%20%3D%20%5B%27https
 
 import id
-import json
 import file_io
 import uuid
 
