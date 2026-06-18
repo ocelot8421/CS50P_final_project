@@ -35,8 +35,15 @@ say_hello_func()
 ```
 
 # Input delays
-```
-dcc.Input(id='input_edge_'+name, type='text', value=tapEdgeData[name], debounce=True)
-```
+```dcc.Input(id='input_edge_'+name, type='text', value=tapEdgeData[name], debounce=True)```
 Study NOTE: https://dash.plotly.com/dash-core-components/input#debounce-delays-the-input-processing
+
+# Hot reload
+dev_tools_hot_reload: https://dash.plotly.com/devtools#configuring-with-run
+```app.run(debug=True, dev_tools_hot_reload=True)```
+
+# PRevent update vs no update
+raise callbacks_py.PreventUpdate: stop function <br>
+no_update: continue function (but not update output????)
+
 

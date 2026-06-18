@@ -18,6 +18,7 @@ from style import stylesheet
 from pprint import pprint
 
 
+
 def main():
 
     app = Dash()
@@ -78,11 +79,42 @@ def main():
         )
     ])
     
-    
-      
-
-    # app.run(debug=True, dev_tools_hot_reload=True) # Stude NOTE dev_tools_hot_reload: https://dash.plotly.com/devtools#configuring-with-run
     app.run(debug=True)
+    
+    
+    
+# Moved from callback_py.py because of CS50P final project requirements  
+@callback(
+    Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
+    Input('delete_node_btn', 'n_clicks'),
+    State(id.CYTOSCPE, 'elements'),
+    State('input_node_id', 'value'),
+    prevent_initial_call=True
+    )
+def preshow_delete_node(delete_btn, elements,id):
+    if delete_btn is None:
+        raise callbacks_py.PreventUpdate
+    
+    elements_remove = []
+    elements_remained = []
+    for element in elements:
+        try:
+            # Delete node and contected edges TODO: seperate edges and nodes from each others
+            # if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
+            #     index = elements.index(element)                             
+            #     elements.pop(index)
+            if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
+                elements_remove.append(element)                            
+        except:
+            callbacks_py.PreventUpdate
+    for element in elements:
+        if element not in elements_remove:
+            elements_remained.append(element)
+            
+    elements = elements_remained
+    callbacks_py.file_io.save_elements_into_python_file(elements, "elements_v2.py")
+    return elements
+
 
 
 if __name__ == '__main__':

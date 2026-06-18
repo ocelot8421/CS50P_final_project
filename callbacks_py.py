@@ -180,38 +180,38 @@ def save_new_node_into_py_file(save_click, elements):
     else:
         file_io.save_elements_into_python_file(elements, "elements_v2.py")
 
+  # Moved into project.py because of CS50P final project requirements  
+# @callback(
+#     Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
+#     Input('delete_node_btn', 'n_clicks'),
+#     State(id.CYTOSCPE, 'elements'),
+#     State('input_node_id', 'value'),
+#     prevent_initial_call=True
+#     )
+# def preshow_delete_node(delete_btn, elements,id):
+#     if delete_btn is None:
+#         raise PreventUpdate # Study NOTE: stop function
+#         # no_update # Study NOTE: continue function (but not update output????)
     
-@callback(
-    Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
-    Input('delete_node_btn', 'n_clicks'),
-    State(id.CYTOSCPE, 'elements'),
-    State('input_node_id', 'value'),
-    prevent_initial_call=True
-    )
-def preshow_delete_node(delete_btn, elements,id):
-    if delete_btn is None:
-        raise PreventUpdate # Study NOTE: stop function
-        # no_update # Study NOTE: continue function (but not update output????)
-    
-    elements_remove = []
-    elements_remained = []
-    for element in elements:
-        try:
-            # Delete node and contected edges TODO: seperate edges and nodes from each others
-            # if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
-            #     index = elements.index(element)                             
-            #     elements.pop(index)
-            if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
-                elements_remove.append(element)                            
-        except:
-            no_update
-    for element in elements:
-        if element not in elements_remove:
-            elements_remained.append(element)
+#     elements_remove = []
+#     elements_remained = []
+#     for element in elements:
+#         try:
+#             # Delete node and contected edges TODO: seperate edges and nodes from each others
+#             # if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
+#             #     index = elements.index(element)                             
+#             #     elements.pop(index)
+#             if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
+#                 elements_remove.append(element)                            
+#         except:
+#             no_update
+#     for element in elements:
+#         if element not in elements_remove:
+#             elements_remained.append(element)
             
-    elements = elements_remained
-    file_io.save_elements_into_python_file(elements, "elements_v2.py")
-    return elements
+#     elements = elements_remained
+#     file_io.save_elements_into_python_file(elements, "elements_v2.py")
+#     return elements
 
 
 
