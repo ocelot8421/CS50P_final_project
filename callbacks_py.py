@@ -162,7 +162,8 @@ def preshow_modified_node(id, label, label_hun, x, y, elements):
         return no_update
     for element in elements:
         try:
-            if element['data']['label'] == label or element['data']['id'] == id:
+            # if element['data']['label'] == label or element['data']['id'] == id:
+            if element['data']['id'] == id:
                 
                 # Collect ctx values: STUDY NOTE: https://dash.plotly.com/determining-which-callback-input-changed
                 ctx_values = []
