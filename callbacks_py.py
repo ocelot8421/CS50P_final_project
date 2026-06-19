@@ -1,12 +1,17 @@
+"""
+callback_py.py
+"""
+
 from dash import html, Input, Output, State, callback, no_update, ctx
 from dash import dcc
 from dash_cytoscape import utils
 from dash_extensions import EventListener
-from dash.exceptions import PreventUpdate #Sutdy NOTE: https://dash.plotly.com/advanced-callbacks#:~:text=Input%2C%20Output%2C%20callback-,from%20dash.exceptions%20import%20PreventUpdate,-external_stylesheets%20%3D%20%5B%27https
+from dash.exceptions import PreventUpdate   # Sutdy NOTE: https://dash.plotly.com/advanced-callbacks#:~:text=Input%2C%20Output%2C%20callback-,from%20dash.exceptions%20import%20PreventUpdate,-external_stylesheets%20%3D%20%5B%27https
+import uuid
 
 import id
 import file_io
-import uuid
+
 
 
 # --------------------------------------------------------------------------------------------
@@ -99,7 +104,8 @@ def creat_new_node(elements, storage):
         # Turn off "new node" mode
         storage['new_node_appendable'] = False
         
-        file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        # file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        file_io.save_elements(elements)
 
     return elements, storage
 
@@ -167,7 +173,7 @@ def preshow_modified_node(id, label, label_hun, x, y, elements):
                     element[key[0]][key[1]] = ctx_values[i]
                 ctx_values = []
         except:
-            no_update
+            return no_update
     return elements
 
 
@@ -177,7 +183,8 @@ def save_new_node_into_py_file(save_click, elements):
     if save_click is None:
         raise PreventUpdate
     else:
-        file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        # file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        file_io.save_elements(elements)
 
     
 @callback(
@@ -203,13 +210,14 @@ def preshow_delete_node(delete_btn, elements,id):
             if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
                 elements_remove.append(element)                            
         except:
-            no_update
+            return no_update
     for element in elements:
         if element not in elements_remove:
             elements_remained.append(element)
             
     elements = elements_remained
-    file_io.save_elements_into_python_file(elements, "elements_v2.py")
+    # file_io.save_elements_into_python_file(elements, "elements_v2.py")
+    file_io.save_elements(elements)
     return elements
 
 
@@ -296,7 +304,7 @@ def add_edge(event, keydown, tpData, edge_storage):
                 edge_storage.extend([new_edge])
                 end_nodes_set = set()
         except TypeError:
-            no_update
+            return no_update
     
     # Inputs are need to update 
     is_alt_n_down = False
@@ -310,11 +318,18 @@ def add_edge(event, keydown, tpData, edge_storage):
               Input('new_edge_storage', 'data'),
               State(id.CYTOSCPE, 'elements'),
               prevent_initial_call=True)
+# def save_new_edge_into_py_file(edge_storage, elements):
+#     if edge_storage:
+#         elements.extend(edge_storage)
+#         # file_io.save_elements_into_python_file(elements, "elements_v2.py")
+#         file_io.save_elements(elements)
+#         edge_storage = []
+#     return elements
 def save_new_edge_into_py_file(edge_storage, elements):
-    if edge_storage:
-        elements.extend(edge_storage)
-        file_io.save_elements_into_python_file(elements, "elements_v2.py")
-        edge_storage = []
+    if not edge_storage:
+        raise PreventUpdate
+    elements.extend(edge_storage)
+    file_io.save_elements(elements)
     return elements
 
 
@@ -333,7 +348,7 @@ def set_True_alt_M_down(keyboard_storage, keydown, n_keydowns):
     if keydown:
         keyboard_storage['is_alt_M_down'] = keydown['key'] == 'm' and keydown['altKey']
     else:
-        no_update
+        return no_update
     return keyboard_storage
 
 
@@ -347,7 +362,7 @@ def set_False_alt_M_down(keyboard_storage, keyup, n_keyups):
         if keyup['key'] == 'm':
             keyboard_storage['is_alt_M_down'] = False
     else:
-        no_update
+        return no_update
     return keyboard_storage
           
 edge_input_fields = ['source', 'target', 'id']
@@ -404,7 +419,8 @@ def save_new_node_into_py_file(save_click, elements):
     if save_click is None:
         raise PreventUpdate
     else:
-        file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        # file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        file_io.save_elements(elements)
         
 
 @callback(
@@ -439,7 +455,8 @@ def preshow_delete_edge(delete_edge_btn, elements,id_edge):
             if element['data']['id'] == id_edge:
                 index = elements.index(element)                             
                 elements.pop(index)
-                file_io.save_elements_into_python_file(elements, "elements_v2.py") # Logical BUG: rewrite elements file in every true loop
+                # file_io.save_elements_into_python_file(elements, "elements_v2.py")
+                file_io.save_elements(elements)
         except:
-            no_update
+            return no_update
     return elements

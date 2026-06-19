@@ -1,5 +1,5 @@
 """
-https://dash.plotly.com/cytoscape
+project.py
 """
 
 
@@ -7,29 +7,29 @@ import dash_cytoscape as cyto
 from dash import Dash, html, dcc
 from dash import Input, Output, State, callback
 from dash_extensions import EventListener, Keyboard
-import elements_v2
 
 import callbacks_py
+import file_io
+import elements_v2
 import id
 from style import stylesheet
 
 # NOTE for study: https://docs.python.org/3/library/pprint.html#module-pprint
 from pprint import pprint
 
-
+    
 def main():
-
+     
+    # init application and layout
     app = Dash()
-
-    # NOTE for study: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/clientX
     event = {
         "event": "click",
         "props": [id.coordinate_x, id.coordinate_y, "timeStamp", "altKey"]
     }
-
-    # NOTE for study: https://dash.plotly.com/dash-core-components/store
-    app.layout = html.Div([
-        # dcc.Store(id="new_node_storage", storage_type='session'),
+    
+    # Dinamic layout to avoid elements fall back after browser restarting
+    def serve_layout():
+        return html.Div([
         dcc.Store(id="new_node_storage"),
         dcc.Store(id="new_edge_storage"),
         dcc.Store(id="keyboard_storage",
@@ -39,7 +39,7 @@ def main():
             id=id.CYTOSCPE,
             layout={'name': 'preset'},
             style={'height': '800px'},
-            elements=elements_v2.default_gardening_elements,
+            elements=file_io.load_elements(),
             stylesheet=stylesheet
         ),
         dcc.Markdown(id="modify_node_md"),
@@ -76,12 +76,10 @@ def main():
             id="keyboard"
         )
     ])
-    
-    
-      
 
-    # app.run(debug=True, dev_tools_hot_reload=True) # Stude NOTE dev_tools_hot_reload: https://dash.plotly.com/devtools#configuring-with-run
-    app.run(debug=True)
+    app.layout = serve_layout    
+    app.run(debug=False)
+
 
 
 if __name__ == '__main__':
