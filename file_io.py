@@ -43,3 +43,4 @@ def load_elements():
         return default_elements
     with open(USER_JSON, "r", encoding="utf-8") as f:
         return json.load(f)
+    

@@ -7,6 +7,7 @@ import dash_cytoscape as cyto
 from dash import Dash, html, dcc
 from dash import Input, Output, State, callback
 from dash_extensions import EventListener, Keyboard
+from pprint import pprint
 
 import callbacks_py
 import file_io
@@ -78,8 +79,22 @@ def main():
     ])
 
     app.layout = serve_layout    
-    app.run(debug=False)
+    # app.run(debug=False)
+    app.run(port=8080, debug=True)
+    
 
+# CS50P requirement - unit test #1
+def get_all_nodes(elements):
+    tree = cyto.utils.Tree(elements)
+    tree.get_nodes()
+    return elements
+
+# def get_all_leaves(elements): TODO
+#     tree = cyto.utils.Tree(elements)
+#     nodes = tree.get_nodes().get('data', 'Unknown').get('id', 'Unknown')
+#     for node in nodes:
+#         pprint(node)
+    
 
 
 if __name__ == '__main__':

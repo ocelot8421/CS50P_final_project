@@ -1,0 +1,4 @@
+{
+  "test_project.py::test_collect_task": true,
+  "test_project.py::test_collect_nodes": true
+}

@@ -1,4 +1,4 @@
-Install dependencies:
+# Install dependencies:
 ```pip install -r requirements.txt```
 
 # Generate exe file:
@@ -30,3 +30,6 @@ Dash is running on http://127.0.0.1:8050/
  * Serving Flask app 'project'
  * Debug mode: off
 ```
+
+# Testing
+```pytest test_project.py ```
