@@ -71,3 +71,11 @@ app.layout = html.Div([
     dcc.Store(id="new_node_storage"),
     dcc.Store(id="new_edge_storage")])
 ```
+
+# Dash bugs
+## get_nodes()
+NOTE: get_nodes() does not work (25.06.2026.), does not filter edges
+```
+tree = cyto.utils.Tree(elements)
+nodes = tree.get_nodes()[0]['data']['id'] 
+```

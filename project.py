@@ -82,12 +82,30 @@ def main():
     # app.run(debug=False)
     app.run(port=8080, debug=True)
     
+# --------------------- CS50P requirement - unit tests --- #1
 
-# CS50P requirement - unit test #1
+@callback(Output(id.MARKDOWN_LOWER, 'children'),              
+              Input(id.CYTOSCPE, 'elements'))
+def display_data_in_lower_md(elements):
+    nodes = get_all_nodes(elements)
+    return "Every field: " + "".join([f"\n* {node['data']['label']}" for node in nodes])
+
 def get_all_nodes(elements):
-    tree = cyto.utils.Tree(elements)
-    tree.get_nodes()
-    return elements
+      
+    nodes = []    
+    for i in elements:
+        if is_node(i): nodes.append(i)
+    return nodes
+
+def is_node(element: dict):
+    if not element['data']:
+        raise TabError.add_note("Given dict is not a dash cytoscape graph element")
+    return 'source' not in element['data'].keys()
+
+def is_edge(element: dict):
+    if not element['data']:
+        raise TabError.add_note("Given dict is not a dash cytoscape graph element")
+    return 'source' in element['data'].keys()
 
 # def get_all_leaves(elements): TODO
 #     tree = cyto.utils.Tree(elements)

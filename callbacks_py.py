@@ -255,11 +255,7 @@ def display_in_upper_md(keyboard_storage):
     return result_str
 
 
-@callback(Output(id.MARKDOWN_LOWER, 'children'),              
-              Input(id.CYTOSCPE, 'tapEdgeData'),
-              prevent_initial_call=True)
-def display_data_in_lower_md(tapEdgeData):
-    return "Tap Edge: " + str(tapEdgeData)
+
 
 
 
