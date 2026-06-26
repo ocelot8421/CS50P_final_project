@@ -204,7 +204,6 @@ def preshow_delete_node(delete_btn, elements,id):
     elements_remained = []
     for element in elements:
         try:
-            print("---element to delete:", element)
             # if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
             if element['data']['id'] == id or element['data'].get('source', '-1') == id or element['data'].get('target') == id:
                 elements_remove.append(element)                            
