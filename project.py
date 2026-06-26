@@ -83,6 +83,7 @@ def main():
     app.run(port=8080, debug=True)
     
 # --------------------- CS50P requirement - unit tests --- #1
+# Serach for all task fields (nodes)
 
 @callback(Output(id.MARKDOWN_LOWER, 'children'),              
               Input(id.CYTOSCPE, 'elements'))
@@ -90,12 +91,30 @@ def display_data_in_lower_md(elements):
     nodes = get_all_nodes(elements)
     return "Every field: " + "".join([f"\n* {node['data']['label']}" for node in nodes])
 
-def get_all_nodes(elements):
-      
+
+def get_all_nodes(elements):      
     nodes = []    
     for i in elements:
         if is_node(i): nodes.append(i)
     return nodes
+
+def get_all_edges(elements):
+    edges = []    
+    for i in elements:
+        if is_edge(i): edges.append(i)
+    return edges
+
+def get_edge_ends(elements):
+    edge_ends = {
+        'sources': [],
+        'targets': []
+    }
+    for e in get_all_edges(elements):
+        edge_ends['sources'].append(e['data']['source'])
+        edge_ends['targets'].append(e['data']['target'])
+    return edge_ends
+    
+
 
 def is_node(element: dict):
     if not element['data']:
@@ -107,11 +126,29 @@ def is_edge(element: dict):
         raise TabError.add_note("Given dict is not a dash cytoscape graph element")
     return 'source' in element['data'].keys()
 
-# def get_all_leaves(elements): TODO
-#     tree = cyto.utils.Tree(elements)
-#     nodes = tree.get_nodes().get('data', 'Unknown').get('id', 'Unknown')
-#     for node in nodes:
-#         pprint(node)
+
+# --------------------- CS50P requirement - unit tests --- #2
+# Serach for all end-nodes
+
+@callback(
+    Output(id.MARKDOWN_UPPER, 'children'),
+    Input(id.CYTOSCPE, 'elements')
+    )
+def display_in_upper_md(elements):
+    nodes = get_all_leaves(elements)
+    return "Every end task: " + "".join([f"\n* {node['data']['label']}" for node in nodes])
+
+def get_all_leaves(elements):    
+    leaves = []
+    leaves_ids = []
+    sources = get_edge_ends(elements)['sources']
+    for t in get_edge_ends(elements)['targets']:
+        if t not in sources:
+            leaves_ids.append(t)
+    for n in get_all_nodes(elements):
+        if n['data']['id'] in leaves_ids:
+            leaves.append(n)            
+    return leaves
     
 
 

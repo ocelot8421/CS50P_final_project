@@ -244,18 +244,6 @@ def display_event(e, tapNode, storage):
     return result_str + f"\n\n TapNode: \n* renderedPosition: {tapNode['renderedPosition']} \n* timeStamp: {tapNode['timeStamp']} \n* relativePosition: {tapNode['relativePosition']}"
 
 
-@callback(
-    Output(id.MARKDOWN_UPPER, 'children'),
-    Input('keyboard_storage', 'data')
-    )
-def display_in_upper_md(keyboard_storage):
-    result_str = ["keyboard_storage: "]
-    for i in keyboard_storage:
-        result_str.append(f"\n* {i}: {keyboard_storage[i]}")
-    return result_str
-
-
-
 
 
 
