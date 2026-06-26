@@ -220,32 +220,6 @@ def preshow_delete_node(delete_btn, elements,id):
     return elements
 
 
-
-# --------------------------------------------------------------------------------------------
-# ---------------------------------------- DISPLAY DATA --------------------------------------
-# --------------------------------------------------------------------------------------------
-
-
-@callback(Output("log_new_node_position", "children"),
-          State(id.EVENTlISTENER, "event"),
-          State(id.CYTOSCPE, 'tapNode'),
-          Input("new_node_storage", "data"),
-          prevent_initial_call=True)
-def display_event(e, tapNode, storage):
-    result_str = f"Event: \n* {e}"
-    if storage is not None:
-        result_str += f"\n\n storage: {storage}"
-        if storage['new_node_appendable']:
-            result_str += f"\n* Tap two node to make another new one"
-    if not tapNode:
-        return result_str
-    # BUG: tapNode - independent from that is Input or State - shows previous state (selected or not)
-    return result_str + f"\n\n TapNode: \n* renderedPosition: {tapNode['renderedPosition']} \n* timeStamp: {tapNode['timeStamp']} \n* relativePosition: {tapNode['relativePosition']}"
-
-
-
-
-
 # --------------------------------------------------------------------------------------------
 # ---------------------------------------- CREATE NEW EDGE -----------------------------------
 # --------------------------------------------------------------------------------------------

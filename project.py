@@ -151,6 +151,30 @@ def get_all_leaves(elements):
     return leaves
     
 
+# --------------------- CS50P requirement - unit tests --- #3
+# Find root
+
+
+@callback(Output("log_new_node_position", "children"),
+          State(id.CYTOSCPE, 'elements'),
+          Input(id.CYTOSCPE, 'tapNode'),
+          prevent_initial_call = True)
+def find_root(elements, tapNod):
+    node_id = tapNod['data']['id']
+    edges = get_all_edges(elements)    
+    parent_id = find_first_parent(edges, node_id)
+    for node in get_all_nodes(elements):
+        if node['data']['id'] == parent_id:
+            return "Goal:  " + node['data']['label']
+    return "No root node"
+            
+def find_first_parent(edges, node_id):
+    for e in edges:
+        if e['data']['target'] == node_id:
+            parent_id = e['data']['source']
+            remaining_edges = [x for x in edges if x != e]
+            return find_first_parent(remaining_edges, parent_id)
+    return node_id
 
 if __name__ == '__main__':
     main()
