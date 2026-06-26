@@ -21,7 +21,7 @@ from pprint import pprint
     
 def main():
      
-    # init application and layout
+    # Init application and layout
     app = Dash()
     event = {
         "event": "click",
@@ -118,12 +118,12 @@ def get_edge_ends(elements):
 
 def is_node(element: dict):
     if not element['data']:
-        raise TabError.add_note("Given dict is not a dash cytoscape graph element")
+        raise TypeError.add_note("Given dict is not a dash cytoscape graph element")
     return 'source' not in element['data'].keys()
 
 def is_edge(element: dict):
     if not element['data']:
-        raise TabError.add_note("Given dict is not a dash cytoscape graph element")
+        raise TypeError.add_note("Given dict is not a dash cytoscape graph element")
     return 'source' in element['data'].keys()
 
 
