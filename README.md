@@ -1,13 +1,11 @@
+More notes for leaners: study_notes.md
+
+
 # Install dependencies:
 ```pip install -r requirements.txt```
 
 # Generate exe file:
-
-```pyinstaller --collect-all dash_cytoscape --collect-all dash --collect-all dash_extensions project.py``` <-- it makes 3-4x bigger exe file, and build very very slowly !!!
-
-
 ```pyinstaller --noconfirm --onedir --clean --hidden-import=dash --collect-data dash --collect-data dash_cytoscape --collect-data dash_extensions project.py```
-
 ```
 [user]@[user]-IdeaPad-5-14ALC05:~$ cd ~
 [user]@[user]-IdeaPad-5-14ALC05:~$ mkdir dash_project

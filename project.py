@@ -80,7 +80,7 @@ def main():
 
     app.layout = serve_layout    
     # app.run(debug=False)
-    app.run(port=8080, debug=True)
+    app.run(port=8050, debug=True)
     
 # --------------------- CS50P requirement - unit tests --- #1
 # Serach for all task fields (nodes)
