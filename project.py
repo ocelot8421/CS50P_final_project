@@ -157,15 +157,15 @@ def get_all_leaves(elements):
 
 @callback(Output("log_new_node_position", "children"),
           State(id.CYTOSCPE, 'elements'),
-          Input(id.CYTOSCPE, 'tapNode'),
+          Input(id.CYTOSCPE, 'tapNodeData'),
           prevent_initial_call = True)
-def find_root(elements, tapNod):
-    node_id = tapNod['data']['id']
+def find_root(elements, tapNodeData):
+    node_id = tapNodeData['id']
     edges = get_all_edges(elements)    
     parent_id = find_first_parent(edges, node_id)
     for node in get_all_nodes(elements):
         if node['data']['id'] == parent_id:
-            return "Goal:  " + node['data']['label']
+            return "Goal > > > " + node['data']['label']
     return "No root node"
             
 def find_first_parent(edges, node_id):

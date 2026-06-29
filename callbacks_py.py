@@ -275,13 +275,6 @@ def add_edge(event, keydown, tpData, edge_storage):
               Input('new_edge_storage', 'data'),
               State(id.CYTOSCPE, 'elements'),
               prevent_initial_call=True)
-# def save_new_edge_into_py_file(edge_storage, elements):
-#     if edge_storage:
-#         elements.extend(edge_storage)
-#         # file_io.save_elements_into_python_file(elements, "elements_v2.py")
-#         file_io.save_elements(elements)
-#         edge_storage = []
-#     return elements
 def save_new_edge_into_py_file(edge_storage, elements):
     if not edge_storage:
         raise PreventUpdate

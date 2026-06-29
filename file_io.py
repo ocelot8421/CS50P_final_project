@@ -12,9 +12,11 @@ from platformdirs import user_data_dir
 
 
 DEFAULT_JSON = os.path.join(os.path.dirname(__file__), "gardening_default.json") 
+# DEFAULT_JSON = os.path.join(os.path.dirname(__file__), "gardening_test.json") # To peek test graph
 # get data directory to save user graph
 USER_DIR = user_data_dir("Mind_Graph_CS50P_final", "8ocelot")
 USER_JSON = os.path.join(USER_DIR, "user_mind_map.json")
+# USER_JSON = os.path.join(USER_DIR, "test_mind_map.json") # To peek test graph
 
 
 import tempfile
