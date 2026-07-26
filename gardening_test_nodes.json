@@ -1,0 +1,52 @@
+[
+    {
+        "data": {
+            "id": "0_1_2", 
+            "label": "Relax in the garden",
+            "label_hun": "Relaxálás a kertben",
+            "picture": "gardenrelax.jpg"
+        },
+        "position": {"x": 0, "y": 0},
+        "classes": "large_picture"
+    },
+    {
+        "data": {
+            "id": "1_2_3", 
+            "label": "Swiping the yard",
+            "label_hun": "Udvar felseprése",
+            "picture": "sweeping_yard.png"
+        },
+        "position": {"x": 40, "y": 130},
+        "classes": "medium_picture"
+    },
+    {
+        "data": {
+            "id": "2_3_4",
+            "label": "Paver weeding",
+            "label_hun": "Térkő gazolása",
+            "picture": "pavernweeding.png"
+        },
+        "position": {"x": -50, "y": 230},
+        "classes": "medium_picture"
+    },
+    {
+        "data": {
+            "id": "3_4_0",
+            "label": "Polymer-stabilized sand",
+            "label_hun": "Polimer fugahomok",
+            "picture": "polymer_sand.png"
+        },
+        "position": {"x": 60, "y": 340},
+        "classes": "medium_picture"
+    },
+    {
+        "data": {
+            "id": "1_5_0",
+            "label": "Watering",
+            "label_hun": "Locsolás",
+            "picture": "watering.png"
+        },
+        "position": {"x": 190, "y": 70},
+        "classes": "medium_picture"
+    }
+]

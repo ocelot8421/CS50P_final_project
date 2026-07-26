@@ -1,13 +1,17 @@
+"""
+callback_py.py
+"""
+
 from dash import html, Input, Output, State, callback, no_update, ctx
 from dash import dcc
 from dash_cytoscape import utils
 from dash_extensions import EventListener
-from dash.exceptions import PreventUpdate #Sutdy NOTE: https://dash.plotly.com/advanced-callbacks#:~:text=Input%2C%20Output%2C%20callback-,from%20dash.exceptions%20import%20PreventUpdate,-external_stylesheets%20%3D%20%5B%27https
+from dash.exceptions import PreventUpdate   # Sutdy NOTE: https://dash.plotly.com/advanced-callbacks#:~:text=Input%2C%20Output%2C%20callback-,from%20dash.exceptions%20import%20PreventUpdate,-external_stylesheets%20%3D%20%5B%27https
+import uuid
 
 import id
-import json
 import file_io
-import uuid
+
 
 
 # --------------------------------------------------------------------------------------------
@@ -91,7 +95,7 @@ def creat_new_node(elements, storage):
                     'data': {
                         'id': new_id,
                         'label': "new field",
-                        'label_hun': 'új mező',
+                        'label_hun': 'új mező', # for hungarian language
                     },
                     'position': storage['new_node_position'],
                     'classes': 'medium_picture'
@@ -100,7 +104,7 @@ def creat_new_node(elements, storage):
         # Turn off "new node" mode
         storage['new_node_appendable'] = False
         
-        file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        file_io.save_elements(elements)
 
     return elements, storage
 
@@ -145,7 +149,7 @@ def generate_node_input_fields(tapNode, event):
     return result_fields
 
 
-# Study NOTE: https://dash.plotly.com/dash-core-components/store#:~:text=closes.%0A%20%20%20%20dcc.Store(id%3D%7B-,%27type%27%3A%20%27storage%27%2C%20%27index%27%3A%20%27session%27,-%7D%2C%20storage_type%3D%27session%27)%2C%0A%0A%20%20%20%20html
+# Study NOTE: https://dash.plotly.com/dash-core-components/store
 @callback(
     Output(id.CYTOSCPE, 'elements', allow_duplicate=True),
     [Input(f"input_node_{name[1]}", 'value') for name in node_input_fields],
@@ -157,9 +161,10 @@ def preshow_modified_node(id, label, label_hun, x, y, elements):
         return no_update
     for element in elements:
         try:
-            if element['data']['label'] == label or element['data']['id'] == id:
+            if element['data']['id'] == id:
                 
-                # Collect ctx values: STUDY NOTE: https://dash.plotly.com/determining-which-callback-input-changed
+                # Collect ctx values
+                # STUDY NOTE: https://dash.plotly.com/determining-which-callback-input-changed
                 ctx_values = []
                 for _,v in ctx.inputs.items():
                     ctx_values.append(v)
@@ -168,7 +173,7 @@ def preshow_modified_node(id, label, label_hun, x, y, elements):
                     element[key[0]][key[1]] = ctx_values[i]
                 ctx_values = []
         except:
-            no_update
+            return no_update
     return elements
 
 
@@ -178,7 +183,7 @@ def save_new_node_into_py_file(save_click, elements):
     if save_click is None:
         raise PreventUpdate
     else:
-        file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        file_io.save_elements(elements)
 
     
 @callback(
@@ -197,63 +202,17 @@ def preshow_delete_node(delete_btn, elements,id):
     elements_remained = []
     for element in elements:
         try:
-            # Delete node and contected edges TODO: seperate edges and nodes from each others
-            # if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
-            #     index = elements.index(element)                             
-            #     elements.pop(index)
-            if element['data']['id'] == id or element['data']['source'] == id or element['data']['target'] == id:
+            if element['data']['id'] == id or element['data'].get('source', '-1') == id or element['data'].get('target') == id:
                 elements_remove.append(element)                            
         except:
-            no_update
+            return no_update
     for element in elements:
         if element not in elements_remove:
             elements_remained.append(element)
             
     elements = elements_remained
-    file_io.save_elements_into_python_file(elements, "elements_v2.py")
+    file_io.save_elements(elements)
     return elements
-
-
-
-# --------------------------------------------------------------------------------------------
-# ---------------------------------------- DISPLAY DATA --------------------------------------
-# --------------------------------------------------------------------------------------------
-
-
-@callback(Output("log_new_node_position", "children"),
-          State(id.EVENTlISTENER, "event"),
-          State(id.CYTOSCPE, 'tapNode'),
-          Input("new_node_storage", "data"),
-          prevent_initial_call=True)
-def display_event(e, tapNode, storage):
-    result_str = f"Event: \n* {e}"
-    if storage is not None:
-        result_str += f"\n\n storage: {storage}"
-        if storage['new_node_appendable']:
-            result_str += f"\n* Tap two node to make another new one"
-    if not tapNode:
-        return result_str
-    # BUG: tapNode - independent from that is Input or State - shows previous state (selected or not)
-    return result_str + f"\n\n TapNode: \n* renderedPosition: {tapNode['renderedPosition']} \n* timeStamp: {tapNode['timeStamp']} \n* relativePosition: {tapNode['relativePosition']}"
-
-
-@callback(
-    Output(id.MARKDOWN_UPPER, 'children'),
-    Input('keyboard_storage', 'data')
-    )
-def display_in_upper_md(keyboard_storage):
-    result_str = ["keyboard_storage: "]
-    for i in keyboard_storage:
-        result_str.append(f"\n* {i}: {keyboard_storage[i]}")
-    return result_str
-
-
-@callback(Output(id.MARKDOWN_LOWER, 'children'),              
-              Input(id.CYTOSCPE, 'tapEdgeData'),
-              prevent_initial_call=True)
-def display_data_in_lower_md(tapEdgeData):
-    return "Tap Edge: " + str(tapEdgeData)
-
 
 
 # --------------------------------------------------------------------------------------------
@@ -262,7 +221,6 @@ def display_data_in_lower_md(tapEdgeData):
 
 
 is_alt_n_down = False
-is_alt_n_up = False
 is_alt_click = False
 end_nodes_set = set()
 @callback(
@@ -297,12 +255,11 @@ def add_edge(event, keydown, tpData, edge_storage):
                 edge_storage.extend([new_edge])
                 end_nodes_set = set()
         except TypeError:
-            no_update
+            return no_update
     
     # Inputs are need to update 
     is_alt_n_down = False
     is_alt_click = False
-    is_alt_n_up = False
     
     return edge_storage
 
@@ -312,10 +269,10 @@ def add_edge(event, keydown, tpData, edge_storage):
               State(id.CYTOSCPE, 'elements'),
               prevent_initial_call=True)
 def save_new_edge_into_py_file(edge_storage, elements):
-    if edge_storage:
-        elements.extend(edge_storage)
-        file_io.save_elements_into_python_file(elements, "elements_v2.py")
-        edge_storage = []
+    if not edge_storage:
+        raise PreventUpdate
+    elements.extend(edge_storage)
+    file_io.save_elements(elements)
     return elements
 
 
@@ -334,7 +291,7 @@ def set_True_alt_M_down(keyboard_storage, keydown, n_keydowns):
     if keydown:
         keyboard_storage['is_alt_M_down'] = keydown['key'] == 'm' and keydown['altKey']
     else:
-        no_update
+        return no_update
     return keyboard_storage
 
 
@@ -348,7 +305,7 @@ def set_False_alt_M_down(keyboard_storage, keyup, n_keyups):
         if keyup['key'] == 'm':
             keyboard_storage['is_alt_M_down'] = False
     else:
-        no_update
+        return no_update
     return keyboard_storage
           
 edge_input_fields = ['source', 'target', 'id']
@@ -383,19 +340,16 @@ def preshow_modified_edge(source, target, id, elements):
     if id is None:
         return no_update
     for element in elements:
-        # try:
-            if element['data']['id'] == id:
-                
-                # Collect ctx values: STUDY NOTE: https://dash.plotly.com/determining-which-callback-input-changed
-                ctx_values = []
-                for _,v in ctx.inputs.items():
-                    ctx_values.append(v)
-                for i in range(len(edge_input_fields)):
-                    key = edge_input_fields[i]
-                    element['data'][key] = ctx_values[i]
-                ctx_values = []
-        # except:
-        #     no_update
+        if element['data']['id'] == id:
+            
+            # Collect ctx values: STUDY NOTE: https://dash.plotly.com/determining-which-callback-input-changed
+            ctx_values = []
+            for _,v in ctx.inputs.items():
+                ctx_values.append(v)
+            for i in range(len(edge_input_fields)):
+                key = edge_input_fields[i]
+                element['data'][key] = ctx_values[i]
+            ctx_values = []
     return elements
 
 
@@ -405,7 +359,7 @@ def save_new_node_into_py_file(save_click, elements):
     if save_click is None:
         raise PreventUpdate
     else:
-        file_io.save_elements_into_python_file(elements, "elements_v2.py")
+        file_io.save_elements(elements)
         
 
 @callback(
@@ -419,7 +373,6 @@ def save_new_node_into_py_file(save_click, elements):
 def flip_arrow_input_data(flip_click, source_in, target_in):
     if flip_click is None:
         raise ValueError.add_note("flip_click is None") # BUG arrow flip instabile, maybe should avoid dublicate uotput (elements)
-    # return inputs ordered backwards
     return target_in, source_in
 
 
@@ -440,7 +393,7 @@ def preshow_delete_edge(delete_edge_btn, elements,id_edge):
             if element['data']['id'] == id_edge:
                 index = elements.index(element)                             
                 elements.pop(index)
-                file_io.save_elements_into_python_file(elements, "elements_v2.py") # Logical BUG: rewrite elements file in every true loop
+                file_io.save_elements(elements)
         except:
-            no_update
+            return no_update
     return elements

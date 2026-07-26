@@ -1,7 +1,7 @@
 CYTOSCPE = 'cytoscape-001'
 
-MARKDOWN_UPPER = 'Selected_Node_md'
-MARKDOWN_LOWER = 'diagnostic_md'
+MARKDOWN_04 = 'Selected_Node_md'
+MARKDOWN_05 = 'diagnostic_md'
 
 # Nodes id
 GARDENRELAX =   '0_1_2'

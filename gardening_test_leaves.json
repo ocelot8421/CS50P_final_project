@@ -1,0 +1,22 @@
+[
+    {
+        "data": {
+            "id": "3_4_0",
+            "label": "Polymer-stabilized sand",
+            "label_hun": "Polimer fugahomok",
+            "picture": "polymer_sand.png"
+        },
+        "position": {"x": 60, "y": 340},
+        "classes": "medium_picture"
+    },
+    {
+        "data": {
+            "id": "1_5_0",
+            "label": "Watering",
+            "label_hun": "Locsolás",
+            "picture": "watering.png"
+        },
+        "position": {"x": 190, "y": 70},
+        "classes": "medium_picture"
+    }
+]
