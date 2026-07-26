@@ -7,43 +7,51 @@ import dash_cytoscape as cyto
 from dash import Dash, html, dcc
 from dash import Input, Output, State, callback
 from dash_extensions import EventListener, Keyboard
-from pprint import pprint
 
 import callbacks_py
 import file_io
-import elements_v2
 import id
 from style import stylesheet
 
-# NOTE for study: https://docs.python.org/3/library/pprint.html#module-pprint
-from pprint import pprint
-
     
 def main():
-     
-    # Init application and layout
-    app = Dash()
-    event = {
+    
+    # Init Dash (datavizualition framework)
+    app = Dash()                                                                    #study_note_02
+    
+    # Define click event for eventlistener. Check the time and the alt key also.
+    event = {                                                                       #study_note_01
         "event": "click",
         "props": [id.coordinate_x, id.coordinate_y, "timeStamp", "altKey"]
     }
     
-    # Dinamic layout to avoid elements fall back after browser restarting
+    # html layout
     def serve_layout():
+        
+        # Dinamic layout to avoid elements fall back after browser restarting
         return html.Div([
+            
+        # Storages
         dcc.Store(id="new_node_storage"),
         dcc.Store(id="new_edge_storage"),
         dcc.Store(id="keyboard_storage",
                   data = {
                       'is_alt_M_down': False}),
-        cyto.Cytoscape(
+        
+        # Graph vizualiton
+        cyto.Cytoscape(                                                             #study_note_02_1
             id=id.CYTOSCPE,
             layout={'name': 'preset'},
             style={'height': '800px'},
             elements=file_io.load_elements(),
             stylesheet=stylesheet
         ),
+        
+        # Upper markdown area
         dcc.Markdown(id="modify_node_md"),
+        
+        # Input containers for node and edge modification (shows up, when chosen a node or edge).
+        # Node chosen via Alt + Click. Edge chosen via Alt + M + Click
         html.Div(id="node_input_container", style={'width': '50%', 'display': 'inline'},
                 children=[
                     dcc.Input(id='input_node_id', type='hidden'),
@@ -65,33 +73,45 @@ def main():
                     html.Button('Delete Edge', id='delete_edge_btn', style={'display': 'none'})
                     ]
                 ),
+        
+        # Lower markdowns
         dcc.Markdown(id="log_new_node_position"),
-        dcc.Markdown(id=id.MARKDOWN_UPPER),
-        dcc.Markdown(id=id.MARKDOWN_LOWER),
-        EventListener(  # Study NOTE: https://pypi.org/project/dash-extensions/0.0.67/#:~:text=your%20Dash%20app.-,EventListener,-The%20EventListener%20component
+        dcc.Markdown(id=id.MARKDOWN_04),
+        dcc.Markdown(id=id.MARKDOWN_05),
+        
+        # Eventlistener. Check the time and the alt key also.
+        EventListener(                                                              #study_note_01
             id=id.EVENTlISTENER,
             events=[event],
             logging=True
         ),
-        Keyboard(
+        
+        # TODO https://dash.plotly.com/ - Eventlistenert átnyálazni 
+        Keyboard(                                                                   #study_note_04
             id="keyboard"
         )
     ])
 
-    app.layout = serve_layout    
-    # app.run(debug=False)
+    app.layout = serve_layout                                                       #study_note_05
     app.run(port=8050, debug=True)
-    
-# --------------------- CS50P requirement - unit tests --- #1
-# Serach for all task fields (nodes)
 
-@callback(Output(id.MARKDOWN_LOWER, 'children'),              
+
+
+# --------------------------------------------------------------------------------------------
+# ------------------------------ CS50P requirement -------------------------------------------
+# ----------------------------------- Unit test ----------------------------------------------
+# --------------------------------------- #1 -------------------------------------------------
+# ----------------------- Serach for all task fields (nodes) ---------------------------------
+# --------------------------------------------------------------------------------------------
+
+
+@callback(Output(id.MARKDOWN_05, 'children'),              
               Input(id.CYTOSCPE, 'elements'))
 def display_data_in_lower_md(elements):
     nodes = get_all_nodes(elements)
     return "Every field: " + "".join([f"\n* {node['data']['label']}" for node in nodes])
 
-
+# Unit test: test_get_all_nodes()
 def get_all_nodes(elements):      
     nodes = []    
     for i in elements:
@@ -114,8 +134,6 @@ def get_edge_ends(elements):
         edge_ends['targets'].append(e['data']['target'])
     return edge_ends
     
-
-
 def is_node(element: dict):
     if not element['data']:
         raise TypeError.add_note("Given dict is not a dash cytoscape graph element")
@@ -127,17 +145,24 @@ def is_edge(element: dict):
     return 'source' in element['data'].keys()
 
 
-# --------------------- CS50P requirement - unit tests --- #2
-# Serach for all end-nodes
+
+# --------------------------------------------------------------------------------------------
+# ------------------------------ CS50P requirement -------------------------------------------
+# ----------------------------------- Unit test ----------------------------------------------
+# --------------------------------------- #2 -------------------------------------------------
+# --------------------- Serach for end-task fields (end-nodes) -------------------------------
+# --------------------------------------------------------------------------------------------
+
 
 @callback(
-    Output(id.MARKDOWN_UPPER, 'children'),
+    Output(id.MARKDOWN_04, 'children'),
     Input(id.CYTOSCPE, 'elements')
     )
 def display_in_upper_md(elements):
     nodes = get_all_leaves(elements)
     return "Every end task: " + "".join([f"\n* {node['data']['label']}" for node in nodes])
 
+# Unit test: test_get_all_leaves()
 def get_all_leaves(elements):    
     leaves = []
     leaves_ids = []
@@ -151,10 +176,16 @@ def get_all_leaves(elements):
     return leaves
     
 
-# --------------------- CS50P requirement - unit tests --- #3
-# Find root
+
+# --------------------------------------------------------------------------------------------
+# ------------------------------ CS50P requirement -------------------------------------------
+# ----------------------------------- Unit test ----------------------------------------------
+# --------------------------------------- #3 -------------------------------------------------
+# ------------------------- Find goal fileds (root-nodes) ------------------------------------
+# --------------------------------------------------------------------------------------------
 
 
+# Unit test: test_find_root()
 @callback(Output("log_new_node_position", "children"),
           State(id.CYTOSCPE, 'elements'),
           Input(id.CYTOSCPE, 'tapNodeData'),
