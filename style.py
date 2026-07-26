@@ -19,7 +19,7 @@ stylesheet = [
     {'selector': '.pink',   'style': {'background-color': 'pink'}},
     {'selector': '.green',  'style': {'background-color': 'green'}},
     
-    # https://www.w3schools.com/cssref/css_colors.php    
+    # Study NOTE: https://www.w3schools.com/cssref/css_colors.php    
     {'selector': '.cornsilk',
      'style': {'background-color': '#FFF8DC'}},
     {'selector': '.darkSeaGreen', 'style': {
