@@ -1,6 +1,9 @@
 #study_note_01
 ```EventListener()```
+v0.0.68.: 
 https://pypi.org/project/dash-extensions/0.0.68/#:~:text=example%20app%20above.-,EventListener,-The%20EventListener%20component
+v2.0.1.:
+https://dash-extensions-docs.onrender.com/components/event_listener
 
 #study_note_02
 ```Dash()```
@@ -16,7 +19,11 @@ https://cs50.harvard.edu/python/notes/4/#:~:text=received.%20Modify%20your%20cod
 
 #study_note_04
 ```Input("keyboard", "n_keydowns")```
+
 https://github.com/emilhe/dash-extensions/issues/11#:~:text=%5BInput(%22keyboard%22%2C%20%22n_keydowns%22)%5D%2C
+v2.0.1.:
+https://dash-extensions-docs.onrender.com/components/keyboard
+KEyboard removed: https://github.com/plotly/dash/issues/723#:~:text=Keyboard%20component%20was%20removed
 
 #study_note_05
 ```app.layout = serve_layout```
